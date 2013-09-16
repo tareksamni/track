@@ -1,4 +1,4 @@
-package server
+package storage
 
 type Session struct {
 	ProfileID   int    // 100

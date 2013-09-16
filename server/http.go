@@ -5,7 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/schema"
-	"github.com/simonz05/profanity/util"
+	"github.com/simonz05/track/util"
+	"github.com/simonz05/track/storage"
 )
 
 func init() {
@@ -28,7 +29,7 @@ func appError(w http.ResponseWriter, err error) {
 
 func sessionHandle(w http.ResponseWriter, r *http.Request) {
 	//util.Logf("Session Handle")
-	session := new(Session)
+	session := new(storage.Session)
 
 	if err := r.ParseForm(); err != nil {
 		appError(w, err)
