@@ -13,8 +13,16 @@ func dataError(w http.ResponseWriter, error string) {
 	fmt.Fprintf(w, error)
 }
 
+var regionValidator = regexp.MustCompile("^[a-zA-Z]{2,3}$")
+
+func parseRegion(w http.ResponseWriter, r *http.Request) string, error {
+	if !regionValidator.MatchString(r.PostFormValue("Region")) {
+	}
+}
+
 func sessionHandle(w http.ResponseWriter, r *http.Request) {
 	util.Logf("Session Handle")
+	d := new(Session)
 	w.WriteHeader(201)
 }
 
