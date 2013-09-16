@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/simonz05/track.png?branch=master)](https://travis-ci.org/simonz05/track)
 
-`track` is a HTTP server it implements an API used
-to collect events and store them in a MySQL database.
+`track` is an HTTP server used to collect events for an
+in-house analytics service.
 
 Usage:
 
@@ -47,10 +47,10 @@ The flags are:
         string  Required
 
     Message
-        string Optional
+        string  Optional
 
     ProfileID   
-        int   Optional
+        int     Optional
 
 **Response**
 
@@ -66,7 +66,7 @@ The flags are:
 **Parameters**
 
     ProfileID   
-        int   Required
+        int     Required
 
     Region      
         string  Required
@@ -75,7 +75,7 @@ The flags are:
         string  Optional
 
     Message
-        string Optional
+        string  Optional
 
 **Response**
 
@@ -91,7 +91,7 @@ The flags are:
 **Parameters**
 
     ProfileID   
-        int   Required
+        int     Required
 
     Region      
         string  Required
@@ -103,13 +103,13 @@ The flags are:
         string  Required
 
     IsUGC    
-        bool  Required
+        bool    Required
 
     PriceGold    
-        int  Optional
+        int     Optional
 
     PriceSilver    
-        int  Optional
+        int     Optional
 
 **Response**
 
@@ -126,7 +126,7 @@ The flags are:
 **Parameters**
 
     ProfileID   
-        int   Required
+        int     Required
 
     Region      
         string  Required
@@ -135,10 +135,10 @@ The flags are:
         string  Required
 
     GrossAmount    
-        int  Required
+        int     Required
 
     NetAmount    
-        int  Required
+        int     Required
 
     PaymentProvider    
         string  Required
