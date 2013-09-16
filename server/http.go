@@ -3,39 +3,51 @@ package server
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 
+	"github.com/gorilla/schema"
 	"github.com/simonz05/profanity/util"
 )
 
-func dataError(w http.ResponseWriter, error string) {
-	w.WriteHeader(400)
-	fmt.Fprintf(w, error)
+func init() {
+	util.LogLevel = 0
 }
 
-var regionValidator = regexp.MustCompile("^[a-zA-Z]{2,3}$")
+var dataDecoder = schema.NewDecoder()
 
-func parseRegion(w http.ResponseWriter, r *http.Request) string, error {
-	if !regionValidator.MatchString(r.PostFormValue("Region")) {
-	}
+func dataError(w http.ResponseWriter, err string) {
+	util.Logf("err: %v", err)
+	w.WriteHeader(400)
+	fmt.Fprintf(w, err)
+}
+
+func appError(w http.ResponseWriter, err error) {
+	util.Logf("err: %v", err)
+	w.WriteHeader(501)
+	fmt.Fprintln(w, err)
 }
 
 func sessionHandle(w http.ResponseWriter, r *http.Request) {
-	util.Logf("Session Handle")
-	d := new(Session)
+	//util.Logf("Session Handle")
+	session := new(Session)
+
+	if err := r.ParseForm(); err != nil {
+		appError(w, err)
+		return
+	}
+
+	if err := dataDecoder.Decode(session, r.PostForm); err != nil {
+		dataError(w, fmt.Sprintln(err))
+		return
+	}
+
+	util.Logln(session)
+	// TODO validate that required fields exists
+	// TODO Store session event
 	w.WriteHeader(201)
 }
 
 func userHandle(w http.ResponseWriter, r *http.Request) {
 	util.Logf("User Handle")
-
-	profileID, err := strconv.Atoi(r.PostFormValue("ProfileID"))
-	if err != nil {
-		util.Logln(err)
-		dataError(w, "Expected ProfileID")
-	}
-
-	util.Logf("ProfileID %d", profileID)
 	w.WriteHeader(201)
 }
 

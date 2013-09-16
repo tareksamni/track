@@ -13,10 +13,10 @@ import (
 )
 
 var (
-	verbose  = flag.Bool("v", false, "verbose mode")
-	help     = flag.Bool("h", false, "show help text")
-	laddr    = flag.String("http", ":8080", "set bind address for the HTTP server")
-	dsn    = flag.String("dsn", "", "MySQL Data Source Name")
+	verbose    = flag.Bool("v", false, "verbose mode")
+	help       = flag.Bool("h", false, "show help text")
+	laddr      = flag.String("http", ":8080", "set bind address for the HTTP server")
+	dsn        = flag.String("dsn", "", "MySQL Data Source Name")
 	logLevel   = flag.Int("log", 0, "set log level")
 	version    = flag.Bool("version", false, "show version number and exit")
 	cpuprofile = flag.String("debug.cpuprofile", "", "write cpu profile to file")

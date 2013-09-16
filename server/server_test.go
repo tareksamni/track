@@ -20,7 +20,7 @@ var (
 )
 
 func startServer() {
-	util.LogLevel = 1
+	util.LogLevel = 0
 	err := setupServer("")
 
 	if err != nil {
@@ -72,7 +72,11 @@ func TestSession(t *testing.T) {
 	once.Do(startServer)
 
 	tests := []*TestCase{
-		{&SessionTest{1, "abc", "127.0.0.1", "session type", "message"}, 201},
+		{&SessionTest{
+			ProfileID:   1,
+			SessionID:   "abc",
+			RemoteIP:    "127.0.0.1",
+			SessionType: "session type"}, 201},
 	}
 
 	for i, x := range tests {
@@ -112,40 +116,30 @@ func doHttp(t *testing.T, index int, endpoint string, data interface{}, statusCo
 	}
 }
 
-// func BenchmarkServer(b *testing.B) {
-// 	once.Do(startServer)
-//
-// 	in := []string{"a", "b", "c", "d", "e", "f", "g", "h", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"}
-// 	values := url.Values{}
-//
-// 	for _, s := range in {
-// 		values.Add("blacklist", s)
-// 	}
-//
-// 	params := strings.NewReader(values.Encode())
-// 	req, _ := http.NewRequest("POST", fmt.Sprintf("http://%s/api/1.0/blacklist/", serverAddr), params)
-// 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-//
-// 	client := &http.Client{}
-// 	_, err := client.Do(req)
-//
-// 	if err != nil {
-// 		b.Fatalf("error posting: %s", err)
-// 		return
-// 	}
-//
-// 	values = url.Values{
-// 		"text": in,
-// 	}
-// 	uri := fmt.Sprintf("http://%s/api/1.0/sanitize/?%s", serverAddr, values.Encode())
-//
-// 	b.ResetTimer()
-//
-// 	for i := 0; i < b.N; i++ {
-// 		_, err := http.Get(uri)
-//
-// 		if err != nil {
-// 			b.Fatalf("error posting: %s", err)
-// 		}
-// 	}
-// }
+func BenchmarkServer(b *testing.B) {
+	once.Do(startServer)
+
+	values := url.Values{}
+	values.Add("ProfileID", "1")
+	values.Add("SessionID", "abc")
+	values.Add("RemoteIP", "127.0.0.1")
+	values.Add("SessionType", "session type")
+
+	params := strings.NewReader(values.Encode())
+	uri := fmt.Sprintf("http://%s/api/1.0/track/session/", serverAddr)
+
+	client := &http.Client{}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		req, _ := http.NewRequest("POST", uri, params)
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+		_, err := client.Do(req)
+
+		if err != nil {
+			b.Fatalf("error posting: %s", err)
+		}
+	}
+}
