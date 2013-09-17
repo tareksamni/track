@@ -21,7 +21,7 @@ var (
 
 func startServer() {
 	util.LogLevel = 0
-	err := setupServer("testing:testing@tcp(localhost:3306)/testing?charset=utf8")
+	err := setupServer("travis@tcp(localhost:3306)/myapp_test?charset=utf8")
 
 	if err != nil {
 		panic(err)
