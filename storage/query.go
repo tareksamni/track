@@ -119,7 +119,7 @@ func InsertEvents(any []Event) (err error) {
 		return
 	}
 	if err = InsertUsers(users); err != nil {
-		return 
+		return
 	}
 	if err = InsertItems(items); err != nil {
 		return

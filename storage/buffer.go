@@ -8,7 +8,7 @@ var typeErr = errors.New("Invalid Type")
 
 type Event interface{}
 
-type Buffer interface{
+type Buffer interface {
 	Flush() error
 	Add(Event) error
 }

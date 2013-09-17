@@ -9,13 +9,13 @@ import (
 const bufSize = 100
 
 type Queue struct {
-	Buf	  Buffer
-	Chan  chan Event
+	Buf  Buffer
+	Chan chan Event
 }
 
 func newQueue() *Queue {
 	return &Queue{
-		Chan:  make(chan Event, 100),
+		Chan: make(chan Event, 100),
 	}
 }
 
@@ -41,7 +41,7 @@ func (q *Queue) Collect() {
 			if err != nil {
 				util.Logf("err %v", err)
 			}
-		case <-time.After(time.Millisecond*500):
+		case <-time.After(time.Millisecond * 500):
 			util.Logf("timeout")
 			q.Buf.Flush()
 		}
