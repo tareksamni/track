@@ -84,36 +84,55 @@ func genericInsertQuery(table string, columns []string, n int) string {
 	return fmt.Sprintf("INSERT INTO %s(%s) VALUES%s", table, columnNames, columnRepl)
 }
 
-func InsertSession(ses *Session) error {
-	_, err := InsertSessionStmt.Exec(ses.Region, ses.SessionID, ses.ProfileID, ses.RemoteIP, ses.SessionType, ses.Created, ses.Message)
-	return err
-}
-
 func InsertEvents(any []Event) (err error) {
-	sessions := make([]*Session, 0, len(any))
-	items := make([]*Item, 0, len(any))
-	users := make([]*User, 0, len(any))
-	purchases := make([]*Purchase, 0, len(any))
+	var sessions []*Session
+	var items []*Item
+	var users []*User
+	var purchases []*Purchase
 
-	for _, ev := range any {
+	for i, ev := range any {
 		switch v := ev.(type) {
 		case *Session:
+			if i == 0 {
+				sessions = make([]*Session, 0, len(any))
+			}
 			sessions = append(sessions, v)
 		case *User:
+			if i == 0 {
+				items = make([]*Item, 0, len(any))
+			}
 			users = append(users, v)
 		case *Item:
+			if i == 0 {
+				users = make([]*User, 0, len(any))
+			}
 			items = append(items, v)
 		case *Purchase:
+			if i == 0 {
+				purchases = make([]*Purchase, 0, len(any))
+			}
 			purchases = append(purchases, v)
 		}
 	}
 
-	InsertSessions(sessions)
-	InsertUsers(users)
-	InsertItems(items)
-	InsertPurchases(purchases)
+	if err = InsertSessions(sessions); err != nil {
+		return
+	}
+	if err = InsertUsers(users); err != nil {
+		return 
+	}
+	if err = InsertItems(items); err != nil {
+		return
+	}
+	if err = InsertPurchases(purchases); err != nil {
+		return
+	}
+	return
+}
 
-	return nil
+func InsertSession(ses *Session) error {
+	_, err := InsertSessionStmt.Exec(ses.Region, ses.SessionID, ses.ProfileID, ses.RemoteIP, ses.SessionType, ses.Created, ses.Message)
+	return err
 }
 
 func InsertSessions(ses []*Session) (err error) {
