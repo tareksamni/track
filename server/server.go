@@ -7,12 +7,14 @@ import (
 	"os/signal"
 
 	"github.com/gorilla/mux"
+	"github.com/simonz05/track/storage"
 	"github.com/simonz05/track/util"
 )
 
 var (
 	Version = "0.1.0"
 	router  *mux.Router
+	queue   *storage.Queue
 )
 
 func sigTrapCloser(l net.Listener) {
@@ -22,13 +24,23 @@ func sigTrapCloser(l net.Listener) {
 	go func() {
 		for _ = range c {
 			l.Close()
+			// TODO: Db Close
 			util.Logf("Closed listener %s", l.Addr())
 		}
 	}()
 }
 
+func setupCollector() {
+	queue = storage.NewQueue()
+	go queue.Collect()
+}
+
 func setupServer(dsn string) error {
-	// TODO setup SQL
+	if _, err := storage.SetupDb(dsn); err != nil {
+		return err
+	}
+
+	setupCollector()
 
 	// HTTP endpoints
 	router = mux.NewRouter()
@@ -43,9 +55,7 @@ func setupServer(dsn string) error {
 }
 
 func ListenAndServe(laddr, dsn string) error {
-	err := setupServer(dsn)
-
-	if err != nil {
+	if err := setupServer(dsn); err != nil {
 		return err
 	}
 

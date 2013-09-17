@@ -1,12 +1,17 @@
 package storage
 
+import (
+	"time"
+)
+
 type Session struct {
-	ProfileID   int    // 100
-	Region      string // BR
-	SessionID   string // 123ABCDFG
-	RemoteIP    string // 127.0.0.1
-	SessionType string // Web
-	Message     string // PageView
+	ProfileID   int       // 100
+	Region      string    // BR
+	SessionID   string    // 123ABCDFG
+	RemoteIP    string    // 127.0.0.1
+	SessionType string    // Web
+	Message     string    // PageView
+	Created     time.Time `schema:"-"`
 }
 
 type User struct {
@@ -14,6 +19,7 @@ type User struct {
 	Region    string
 	Referrer  string
 	Message   string
+	Created   time.Time `schema:"-"`
 }
 
 type Item struct {
@@ -24,6 +30,7 @@ type Item struct {
 	IsUGC       bool
 	PriceGold   int
 	PriceSilver int
+	Created     time.Time `schema:"-"`
 }
 
 type Purchase struct {
@@ -34,4 +41,5 @@ type Purchase struct {
 	NetAmount       int
 	PaymentProvider string
 	Product         string
+	Created         time.Time `schema:"-"`
 }

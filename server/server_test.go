@@ -21,11 +21,13 @@ var (
 
 func startServer() {
 	util.LogLevel = 0
-	err := setupServer("")
+	err := setupServer("testing:testing@tcp(localhost:3306)/testing?charset=utf8")
 
 	if err != nil {
 		panic(err)
 	}
+
+	setupCollector()
 
 	server = httptest.NewServer(nil)
 	serverAddr = server.Listener.Addr().String()
@@ -33,6 +35,7 @@ func startServer() {
 
 type SessionTest struct {
 	ProfileID   int
+	Region      string
 	SessionID   string
 	RemoteIP    string
 	SessionType string
@@ -41,12 +44,14 @@ type SessionTest struct {
 
 type UserTest struct {
 	ProfileID int
+	Region    string
 	Referrer  string
 	Message   string
 }
 
 type ItemTest struct {
 	ProfileID   int
+	Region      string
 	ItemName    string
 	ItemType    string
 	IsUGC       bool
@@ -56,6 +61,7 @@ type ItemTest struct {
 
 type PruchaseTest struct {
 	ProfileID       int
+	Region          string
 	Currency        string
 	GrossAmount     int
 	NetAmount       int
@@ -74,6 +80,7 @@ func TestSession(t *testing.T) {
 	tests := []*TestCase{
 		{&SessionTest{
 			ProfileID:   1,
+			Region:      "BR",
 			SessionID:   "abc",
 			RemoteIP:    "127.0.0.1",
 			SessionType: "session type"}, 201},
@@ -105,6 +112,7 @@ func doHttp(t *testing.T, index int, endpoint string, data interface{}, statusCo
 
 	client := &http.Client{}
 	r, err := client.Do(req)
+	fmt.Println(values.Encode())
 
 	if err != nil {
 		t.Fatalf("error posting: %s", err)
