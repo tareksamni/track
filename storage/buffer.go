@@ -1,5 +1,50 @@
 package storage
 
+import (
+	"errors"
+)
+
+var typeErr = errors.New("Invalid Type")
+
+type Event interface{}
+
+type Buffer interface{
+	Flush() error
+	Add(Event) error
+}
+
+type EventBuffer struct {
+	buf []Event
+}
+
+func NewEventBuffer(n int) *EventBuffer {
+	return &EventBuffer{
+		buf: make([]Event, 0, n),
+	}
+}
+
+func (s *EventBuffer) Flush() error {
+	err := InsertEvents(s.buf)
+
+	for i := 0; i < len(s.buf); i++ {
+		s.buf[i] = nil
+	}
+
+	s.buf = s.buf[:0]
+	return err
+}
+
+func (s *EventBuffer) Add(ev Event) error {
+	if len(s.buf) == cap(s.buf) {
+		if err := s.Flush(); err != nil {
+			return err
+		}
+	}
+
+	s.buf = append(s.buf, ev)
+	return nil
+}
+
 type SessionBuffer struct {
 	buf []*Session
 }
@@ -21,14 +66,20 @@ func (s *SessionBuffer) Flush() error {
 	return err
 }
 
-func (s *SessionBuffer) Add(ses *Session) error {
+func (s *SessionBuffer) Add(ev Event) error {
+	v, ok := ev.(*Session)
+
+	if !ok {
+		return typeErr
+	}
+
 	if len(s.buf) == cap(s.buf) {
 		if err := s.Flush(); err != nil {
 			return err
 		}
 	}
 
-	s.buf = append(s.buf, ses)
+	s.buf = append(s.buf, v)
 	return nil
 }
 
@@ -53,14 +104,20 @@ func (s *UserBuffer) Flush() error {
 	return err
 }
 
-func (s *UserBuffer) Add(ses *User) error {
+func (s *UserBuffer) Add(ev Event) error {
+	v, ok := ev.(*User)
+
+	if !ok {
+		return typeErr
+	}
+
 	if len(s.buf) == cap(s.buf) {
 		if err := s.Flush(); err != nil {
 			return err
 		}
 	}
 
-	s.buf = append(s.buf, ses)
+	s.buf = append(s.buf, v)
 	return nil
 }
 
@@ -85,14 +142,20 @@ func (s *ItemBuffer) Flush() error {
 	return err
 }
 
-func (s *ItemBuffer) Add(ses *Item) error {
+func (s *ItemBuffer) Add(ev Event) error {
+	v, ok := ev.(*Item)
+
+	if !ok {
+		return typeErr
+	}
+
 	if len(s.buf) == cap(s.buf) {
 		if err := s.Flush(); err != nil {
 			return err
 		}
 	}
 
-	s.buf = append(s.buf, ses)
+	s.buf = append(s.buf, v)
 	return nil
 }
 
@@ -117,13 +180,18 @@ func (s *PurchaseBuffer) Flush() error {
 	return err
 }
 
-func (s *PurchaseBuffer) Add(ses *Purchase) error {
+func (s *PurchaseBuffer) Add(ev Event) error {
+	v, ok := ev.(*Purchase)
+
+	if !ok {
+		return typeErr
+	}
 	if len(s.buf) == cap(s.buf) {
 		if err := s.Flush(); err != nil {
 			return err
 		}
 	}
 
-	s.buf = append(s.buf, ses)
+	s.buf = append(s.buf, v)
 	return nil
 }

@@ -14,7 +14,10 @@ import (
 var (
 	Version = "0.1.0"
 	router  *mux.Router
-	queue   *storage.Queue
+	sessionQueue   *storage.Queue
+	userQueue	*storage.Queue
+	itemQueue   *storage.Queue
+	purchaseQueue   *storage.Queue
 )
 
 func sigTrapCloser(l net.Listener) {
@@ -31,8 +34,10 @@ func sigTrapCloser(l net.Listener) {
 }
 
 func setupCollector() {
-	queue = storage.NewQueue()
-	go queue.Collect()
+	sessionQueue = storage.NewEventQueue()
+	userQueue = storage.NewUserQueue()
+	itemQueue = storage.NewItemQueue()
+	purchaseQueue = storage.NewPurchaseQueue()
 }
 
 func setupServer(dsn string) error {

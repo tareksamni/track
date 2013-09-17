@@ -47,7 +47,7 @@ func sessionHandle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ses.Created = time.Now()
-	queue.Session <- ses
+	sessionQueue.Chan <- ses
 	w.WriteHeader(201)
 }
 
@@ -78,7 +78,7 @@ func userHandle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user.Created = time.Now()
-	queue.User <- user
+	userQueue.Chan <- user
 	w.WriteHeader(201)
 }
 
@@ -109,7 +109,7 @@ func itemHandle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	item.Created = time.Now()
-	queue.Item <- item
+	itemQueue.Chan <- item
 	w.WriteHeader(201)
 }
 
@@ -140,6 +140,6 @@ func purchaseHandle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	purchase.Created = time.Now()
-	queue.Purchase <- purchase
+	purchaseQueue.Chan <- purchase
 	w.WriteHeader(201)
 }

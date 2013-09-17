@@ -9,60 +9,69 @@ import (
 const bufSize = 100
 
 type Queue struct {
-	Session  chan *Session
-	User     chan *User
-	Item     chan *Item
-	Purchase chan *Purchase
+	Buf	  Buffer
+	Chan  chan Event
 }
 
-func NewQueue() *Queue {
+func newQueue() *Queue {
 	return &Queue{
-		Session:  make(chan *Session, 100),
-		User:     make(chan *User, 100),
-		Item:     make(chan *Item, 100),
-		Purchase: make(chan *Purchase, 100),
+		Chan:  make(chan Event, 100),
 	}
+}
+
+func NewEventQueue() *Queue {
+	q := newQueue()
+	q.Buf = NewEventBuffer(bufSize)
+	go q.Collect()
+	return q
+}
+
+func NewSessionQueue() *Queue {
+	q := newQueue()
+	q.Buf = NewSessionBuffer(bufSize)
+	go q.Collect()
+	return q
+}
+
+func NewUserQueue() *Queue {
+	q := newQueue()
+	q.Buf = NewUserBuffer(bufSize)
+	go q.Collect()
+	return q
+}
+
+func NewItemQueue() *Queue {
+	q := newQueue()
+	q.Buf = NewItemBuffer(bufSize)
+	go q.Collect()
+	return q
+}
+
+func NewPurchaseQueue() *Queue {
+	q := newQueue()
+	q.Buf = NewPurchaseBuffer(bufSize)
+	go q.Collect()
+	return q
 }
 
 func (q *Queue) Collect() {
 	util.Logf("Queue Starting ")
-	sessions := NewSessionBuffer(bufSize)
-	users := NewUserBuffer(bufSize)
-	items := NewItemBuffer(bufSize)
-	purchases := NewPurchaseBuffer(bufSize)
+
+	if q.Buf == nil {
+		panic("Buffer was nil")
+	}
 
 	for {
 		select {
-		case v := <-q.Session:
-			util.Logf("got session")
-			err := sessions.Add(v)
+		case v := <-q.Chan:
+			util.Logf("got event")
+			err := q.Buf.Add(v)
 			if err != nil {
 				util.Logf("err %v", err)
 			}
-		case v := <-q.User:
-			util.Logf("got user")
-			err := users.Add(v)
-			if err != nil {
-				util.Logf("err %v", err)
-			}
-		case v := <-q.Item:
-			util.Logf("got item")
-			err := items.Add(v)
-			if err != nil {
-				util.Logf("err %v", err)
-			}
-		case v := <-q.Purchase:
-			util.Logf("got purchase")
-			err := purchases.Add(v)
-			if err != nil {
-				util.Logf("err %v", err)
-			}
-		case <-time.After(time.Second):
+		case <-time.After(time.Millisecond*500):
 			util.Logf("timeout")
-			sessions.Flush()
-			users.Flush()
-			items.Flush()
-			purchases.Flush()
+			q.Buf.Flush()
 		}
 	}
 }

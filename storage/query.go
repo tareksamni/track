@@ -89,6 +89,33 @@ func InsertSession(ses *Session) error {
 	return err
 }
 
+func InsertEvents(any []Event) (err error) {
+	sessions := make([]*Session, 0, len(any))
+	items := make([]*Item, 0, len(any))
+	users := make([]*User, 0, len(any))
+	purchases := make([]*Purchase, 0, len(any))
+
+	for _, ev := range any {
+		switch v := ev.(type) {
+		case *Session:
+			sessions = append(sessions, v)
+		case *User:
+			users = append(users, v)
+		case *Item:
+			items = append(items, v)
+		case *Purchase:
+			purchases = append(purchases, v)
+		}
+	}
+
+	InsertSessions(sessions)
+	InsertUsers(users)
+	InsertItems(items)
+	InsertPurchases(purchases)
+
+	return nil
+}
+
 func InsertSessions(ses []*Session) (err error) {
 	if len(ses) == 0 {
 		return
