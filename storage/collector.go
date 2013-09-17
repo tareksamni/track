@@ -26,34 +26,6 @@ func NewEventQueue() *Queue {
 	return q
 }
 
-func NewSessionQueue() *Queue {
-	q := newQueue()
-	q.Buf = NewSessionBuffer(bufSize)
-	go q.Collect()
-	return q
-}
-
-func NewUserQueue() *Queue {
-	q := newQueue()
-	q.Buf = NewUserBuffer(bufSize)
-	go q.Collect()
-	return q
-}
-
-func NewItemQueue() *Queue {
-	q := newQueue()
-	q.Buf = NewItemBuffer(bufSize)
-	go q.Collect()
-	return q
-}
-
-func NewPurchaseQueue() *Queue {
-	q := newQueue()
-	q.Buf = NewPurchaseBuffer(bufSize)
-	go q.Collect()
-	return q
-}
-
 func (q *Queue) Collect() {
 	util.Logf("Queue Starting ")
 
