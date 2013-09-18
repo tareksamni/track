@@ -22,6 +22,8 @@ var (
 	cpuprofile = flag.String("debug.cpuprofile", "", "write cpu profile to file")
 )
 
+var Version   = "0.1.1"
+
 func usage() {
 	fmt.Fprintf(os.Stderr, "Usage: %s [OPTIONS]\n", os.Args[0])
 	fmt.Fprintf(os.Stderr, "\nOptions:\n")
@@ -33,7 +35,7 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		fmt.Fprintln(os.Stderr, server.Version)
+		fmt.Fprintln(os.Stdout, Version)
 		return
 	}
 

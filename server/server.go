@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	Version       = "0.1.0"
 	router        *mux.Router
 	sessionQueue  *storage.Queue
 	userQueue     *storage.Queue
