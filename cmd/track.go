@@ -22,7 +22,7 @@ var (
 	cpuprofile = flag.String("debug.cpuprofile", "", "write cpu profile to file")
 )
 
-var Version = "0.1.1"
+var Version = "0.1.2"
 
 func usage() {
 	fmt.Fprintf(os.Stderr, "Usage: %s [OPTIONS]\n", os.Args[0])
