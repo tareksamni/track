@@ -2,7 +2,10 @@ package storage
 
 import (
 	"time"
+	"errors"
 )
+
+var typeErr = errors.New("Invalid Type")
 
 type Session struct {
 	ProfileID   int       // 100

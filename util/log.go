@@ -7,15 +7,24 @@ import (
 
 var (
 	LogLevel int = 0
-	Logger       = log.New(os.Stdout, "", log.Ldate|log.Lmicroseconds)
+	Logger = log.New(os.Stdout, "", log.Ldate|log.Lmicroseconds)
+	Error  = log.New(os.Stderr, "", log.Ldate|log.Lmicroseconds)
 )
+
+func Errf(fmt string, args ...interface{}) {
+	Error.Printf(fmt, args...)
+}
+
+func Errln(args ...interface{}) {
+	Logger.Println(args...)
+}
 
 func Logf(fmt string, args ...interface{}) {
 	if LogLevel == 0 {
 		return
 	}
 
-	log.Printf(fmt, args...)
+	Logger.Printf(fmt, args...)
 }
 
 func Logln(args ...interface{}) {
@@ -23,5 +32,5 @@ func Logln(args ...interface{}) {
 		return
 	}
 
-	log.Println(args...)
+	Logger.Println(args...)
 }

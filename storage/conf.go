@@ -26,6 +26,9 @@ func SetupDb(dsn string) (*sql.DB, error) {
 		return nil, err
 	}
 
+	db.SetMaxIdleConns(32)
+	db.SetMaxOpenConns(64)
+
 	Db = db
 
 	if err := createUserTable(); err != nil {

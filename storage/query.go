@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+
+	"github.com/simonz05/track/util"
 )
 
 var (
@@ -84,50 +86,26 @@ func genericInsertQuery(table string, columns []string, n int) string {
 	return fmt.Sprintf("INSERT INTO %s(%s) VALUES%s", table, columnNames, columnRepl)
 }
 
-func InsertEvents(any []Event) (err error) {
-	var sessions []*Session
-	var items []*Item
-	var users []*User
-	var purchases []*Purchase
-
-	for i, ev := range any {
-		switch v := ev.(type) {
+func InsertEvents(any []interface{}) (err error) {
+	if len(any) > 0 {
+		switch any[0].(type) {
 		case *Session:
-			if i == 0 {
-				sessions = make([]*Session, 0, len(any))
-			}
-			sessions = append(sessions, v)
+			err = InsertSessions(any)
 		case *User:
-			if i == 0 {
-				items = make([]*Item, 0, len(any))
-			}
-			users = append(users, v)
+			err = InsertUsers(any)
 		case *Item:
-			if i == 0 {
-				users = make([]*User, 0, len(any))
-			}
-			items = append(items, v)
+			err = InsertItems(any)
 		case *Purchase:
-			if i == 0 {
-				purchases = make([]*Purchase, 0, len(any))
-			}
-			purchases = append(purchases, v)
+			err = InsertPurchases(any)
+		default:
+			err = typeErr
 		}
 	}
 
-	if err = InsertSessions(sessions); err != nil {
-		return
+	if err != nil {
+		util.Errln(err)
 	}
-	if err = InsertUsers(users); err != nil {
-		return
-	}
-	if err = InsertItems(items); err != nil {
-		return
-	}
-	if err = InsertPurchases(purchases); err != nil {
-		return
-	}
-	return
+	return err
 }
 
 func InsertSession(ses *Session) error {
@@ -135,21 +113,17 @@ func InsertSession(ses *Session) error {
 	return err
 }
 
-func InsertSessions(ses []*Session) (err error) {
-	if len(ses) == 0 {
-		return
+func InsertSessions(any []interface{}) (err error) {
+	args, err := flattenSessions(any)
+
+	if err != nil {
+		return err
 	}
 
-	args := make([]interface{}, 0, len(ses))
-
-	for i := 0; i < len(ses); i++ {
-		args = append(args, ses[i].Region, ses[i].SessionID, ses[i].ProfileID, ses[i].RemoteIP, ses[i].SessionType, ses[i].Created, ses[i].Message)
-	}
-
-	if len(ses) != bufSize {
+	if len(any) != bufSize {
 		// If we hit this code path it is slower because we have to create the
 		// prepared statement before doing the insert.
-		q := sessionInsertQuery(len(ses))
+		q := sessionInsertQuery(len(any))
 		_, err = Db.Exec(q, args...)
 	} else {
 		_, err = InsertBulkSessionStmt.Exec(args...)
@@ -163,18 +137,15 @@ func InsertUser(ses *User) error {
 	return err
 }
 
-func InsertUsers(ses []*User) (err error) {
-	if len(ses) == 0 {
-		return
-	}
-	args := make([]interface{}, 0, len(ses))
+func InsertUsers(any []interface{}) (err error) {
+	args, err := flattenUsers(any)
 
-	for i := 0; i < len(ses); i++ {
-		args = append(args, ses[i].Region, ses[i].ProfileID, ses[i].Referrer, ses[i].Created, ses[i].Message)
+	if err != nil {
+		return err
 	}
 
-	if len(ses) != bufSize {
-		q := userInsertQuery(len(ses))
+	if len(any) != bufSize {
+		q := userInsertQuery(len(any))
 		_, err = Db.Exec(q, args...)
 	} else {
 		_, err = InsertBulkUserStmt.Exec(args...)
@@ -188,18 +159,15 @@ func InsertItem(ses *Item) error {
 	return err
 }
 
-func InsertItems(ses []*Item) (err error) {
-	if len(ses) == 0 {
-		return
-	}
-	args := make([]interface{}, 0, len(ses))
+func InsertItems(any []interface{}) (err error) {
+	args, err := flattenItems(any)
 
-	for i := 0; i < len(ses); i++ {
-		args = append(args, ses[i].Region, ses[i].ProfileID, ses[i].ItemName, ses[i].ItemType, ses[i].IsUGC, ses[i].PriceGold, ses[i].PriceSilver, ses[i].Created)
+	if err != nil {
+		return err
 	}
 
-	if len(ses) != bufSize {
-		q := itemInsertQuery(len(ses))
+	if len(any) != bufSize {
+		q := itemInsertQuery(len(any))
 		_, err = Db.Exec(q, args...)
 	} else {
 		_, err = InsertBulkItemStmt.Exec(args...)
@@ -213,22 +181,87 @@ func InsertPurchase(ses *Purchase) error {
 	return err
 }
 
-func InsertPurchases(ses []*Purchase) (err error) {
-	if len(ses) == 0 {
-		return
-	}
-	args := make([]interface{}, 0, len(ses))
+func InsertPurchases(any []interface{}) (err error) {
+	args, err := flattenPurchases(any)
 
-	for i := 0; i < len(ses); i++ {
-		args = append(args, ses[i].Region, ses[i].ProfileID, ses[i].Currency, ses[i].GrossAmount, ses[i].NetAmount, ses[i].PaymentProvider, ses[i].Product, ses[i].Created)
+	if err != nil {
+		return err
 	}
 
-	if len(ses) != bufSize {
-		q := purchaseInsertQuery(len(ses))
+	if len(any) != bufSize {
+		q := purchaseInsertQuery(len(any))
 		_, err = Db.Exec(q, args...)
 	} else {
 		_, err = InsertBulkPurchaseStmt.Exec(args...)
 	}
 
 	return err
+}
+
+func flattenSessions(any []interface{}) (args []interface{}, err error) {
+	columns := 7
+	args = make([]interface{}, 0, len(any)*columns)
+
+	for i := 0; i < len(any); i++ {
+		ses, ok := any[i].(*Session)
+
+		if !ok {
+			return nil, err
+		}
+
+		args = append(args, ses.Region, ses.SessionID, ses.ProfileID, ses.RemoteIP, ses.SessionType, ses.Created, ses.Message)
+	}
+
+	return
+}
+
+func flattenUsers(any []interface{}) (args []interface{}, err error) {
+	columns := 5
+	args = make([]interface{}, 0, len(any)*columns)
+
+	for i := 0; i < len(any); i++ {
+		user, ok := any[i].(*User)
+
+		if !ok {
+			return nil, err
+		}
+
+		args = append(args, user.Region, user.ProfileID, user.Referrer, user.Created, user.Message)
+	}
+
+	return
+}
+
+func flattenItems(any []interface{}) (args []interface{}, err error) {
+	columns := 8
+	args = make([]interface{}, 0, len(any)*columns)
+
+	for i := 0; i < len(any); i++ {
+		item, ok := any[i].(*Item)
+
+		if !ok {
+			return nil, err
+		}
+
+		args = append(args, item.Region, item.ProfileID, item.ItemName, item.ItemType, item.IsUGC, item.PriceGold, item.PriceSilver, item.Created)
+	}
+
+	return
+}
+
+func flattenPurchases(any []interface{}) (args []interface{}, err error) {
+	columns := 8
+	args = make([]interface{}, 0, len(any)*columns)
+
+	for i := 0; i < len(any); i++ {
+		purchase, ok := any[i].(*Purchase)
+
+		if !ok {
+			return nil, err
+		}
+
+		args = append(args, purchase.Region, purchase.ProfileID, purchase.Currency, purchase.GrossAmount, purchase.NetAmount, purchase.PaymentProvider, purchase.Product, purchase.Created)
+	}
+
+	return
 }

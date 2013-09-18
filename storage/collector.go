@@ -6,44 +6,40 @@ import (
 	"github.com/simonz05/track/util"
 )
 
-const bufSize = 100
+const bufSize = 64
 
 type Queue struct {
-	Buf  Buffer
-	Chan chan Event
-}
-
-func newQueue() *Queue {
-	return &Queue{
-		Chan: make(chan Event, 100),
-	}
+	buf  Buffer
+	Chan chan interface{}
 }
 
 func NewEventQueue() *Queue {
-	q := newQueue()
-	q.Buf = NewEventBuffer(bufSize)
-	go q.Collect()
+	q := &Queue{
+		Chan: make(chan interface{}, 100),
+		buf: NewEventBuffer(bufSize),
+	}
+	go q.collect()
 	return q
 }
 
-func (q *Queue) Collect() {
+func (q *Queue) collect() {
 	util.Logf("Queue Starting ")
 
-	if q.Buf == nil {
+	if q.buf == nil {
 		panic("Buffer was nil")
 	}
 
 	for {
 		select {
 		case v := <-q.Chan:
-			util.Logf("got event")
-			err := q.Buf.Add(v)
+			util.Logf("Got Event")
+			err := q.buf.Add(v)
+
 			if err != nil {
 				util.Logf("err %v", err)
 			}
-		case <-time.After(time.Millisecond * 500):
-			util.Logf("timeout")
-			q.Buf.Flush()
+		case <-time.After(time.Second):
+			q.buf.Flush()
 		}
 	}
 }

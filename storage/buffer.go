@@ -1,29 +1,24 @@
 package storage
 
-import (
-	"errors"
-)
-
-var typeErr = errors.New("Invalid Type")
-
-type Event interface{}
-
 type Buffer interface {
 	Flush() error
-	Add(Event) error
+	Add(interface{}) error
 }
 
 type EventBuffer struct {
-	buf []Event
+	buf []interface{}
 }
 
 func NewEventBuffer(n int) *EventBuffer {
 	return &EventBuffer{
-		buf: make([]Event, 0, n),
+		buf: make([]interface{}, 0, n),
 	}
 }
 
 func (s *EventBuffer) Flush() error {
+	//tmp := make([]interface{}, len(s.buf))
+	//copy(tmp, s.buf)
+	//go InsertEvents(tmp)
 	err := InsertEvents(s.buf)
 
 	for i := 0; i < len(s.buf); i++ {
@@ -34,7 +29,7 @@ func (s *EventBuffer) Flush() error {
 	return err
 }
 
-func (s *EventBuffer) Add(ev Event) error {
+func (s *EventBuffer) Add(ev interface{}) error {
 	if len(s.buf) == cap(s.buf) {
 		if err := s.Flush(); err != nil {
 			return err
