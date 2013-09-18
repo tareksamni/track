@@ -1,25 +1,22 @@
 package storage
 
-type Buffer interface {
-	Flush() error
-	Add(interface{}) error
+const insertBufSize = 100
+
+type InsertBuffer struct {
+	buf []TableRecord
 }
 
-type EventBuffer struct {
-	buf []interface{}
-}
-
-func NewEventBuffer(n int) *EventBuffer {
-	return &EventBuffer{
-		buf: make([]interface{}, 0, n),
+func NewInsertBuffer(n int) *InsertBuffer {
+	return &InsertBuffer{
+		buf: make([]TableRecord, 0, n),
 	}
 }
 
-func (s *EventBuffer) Flush() error {
-	//tmp := make([]interface{}, len(s.buf))
+func (s *InsertBuffer) Flush() (err error) {
+	//tmp := make([]TableRecord, len(s.buf))
 	//copy(tmp, s.buf)
-	//go InsertEvents(tmp)
-	err := InsertEvents(s.buf)
+	//go InsertMulti(tmp)
+	err = InsertMulti(s.buf)
 
 	for i := 0; i < len(s.buf); i++ {
 		s.buf[i] = nil
@@ -29,13 +26,13 @@ func (s *EventBuffer) Flush() error {
 	return err
 }
 
-func (s *EventBuffer) Add(ev interface{}) error {
+func (s *InsertBuffer) Add(row TableRecord) error {
 	if len(s.buf) == cap(s.buf) {
 		if err := s.Flush(); err != nil {
 			return err
 		}
 	}
 
-	s.buf = append(s.buf, ev)
+	s.buf = append(s.buf, row)
 	return nil
 }

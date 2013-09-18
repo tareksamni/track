@@ -33,10 +33,10 @@ func sigTrapCloser(l net.Listener) {
 }
 
 func setupCollector() {
-	sessionQueue = storage.NewEventQueue()
-	userQueue = storage.NewEventQueue()
-	itemQueue = storage.NewEventQueue()
-	purchaseQueue = storage.NewEventQueue()
+	sessionQueue = storage.NewInsertQueue()
+	userQueue = storage.NewInsertQueue()
+	itemQueue = storage.NewInsertQueue()
+	purchaseQueue = storage.NewInsertQueue()
 }
 
 func setupServer(dsn string) error {

@@ -27,25 +27,23 @@ func SetupDb(dsn string) (*sql.DB, error) {
 	}
 
 	db.SetMaxIdleConns(32)
-	db.SetMaxOpenConns(64)
+	//db.SetMaxOpenConns(64)
 
 	Db = db
 
 	if err := createUserTable(); err != nil {
-		return db, err
+		return nil, err
 	}
 	if err := createSessionTable(); err != nil {
-		return db, err
+		return nil, err
 	}
 	if err := createItemTable(); err != nil {
-		return db, err
+		return nil, err
 	}
 	if err := createPurchaseTable(); err != nil {
-		return db, err
+		return nil, err
 	}
-	if err := setupQueries(); err != nil {
-		return db, err
-	}
+	defaultStmtCache = newStmtCache()
 	return db, err
 }
 
