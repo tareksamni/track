@@ -19,8 +19,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// Package track provides an event collection HTTP server
-// for an in-house analytics service.
+// track is an event collection HTTP server for an in-house
+// analytics service.
 // 
 // Usage:
 // 
