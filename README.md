@@ -155,5 +155,4 @@ The flags are:
 
 ## TODO
 
-- Correctly close down, cleanup and flush.
 - Check program for race conditions

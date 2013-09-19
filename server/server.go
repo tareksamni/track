@@ -28,6 +28,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync"
 
 	"github.com/gorilla/mux"
 	"github.com/simonz05/track/storage"
@@ -35,31 +36,43 @@ import (
 )
 
 var (
-	router        *mux.Router
-	sessionQueue  *storage.Queue
-	userQueue     *storage.Queue
-	itemQueue     *storage.Queue
-	purchaseQueue *storage.Queue
+	router         *mux.Router
+	sessionQueue   *storage.Queue
+	userQueue      *storage.Queue
+	itemQueue      *storage.Queue
+	purchaseQueue  *storage.Queue
+	collectorsDone *sync.WaitGroup
 )
 
 func sigTrapCloser(l net.Listener) {
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
+	// TODO: Handle more Unix signals
+	signal.Notify(c, os.Interrupt, os.Kill)
 
 	go func() {
 		for _ = range c {
+			stopCollectors()
+			// Once we close the listener the main loop will exit
 			l.Close()
-			// TODO: Db Close
 			util.Logf("Closed listener %s", l.Addr())
 		}
 	}()
 }
 
-func setupCollector() {
-	sessionQueue = storage.NewInsertQueue()
-	userQueue = storage.NewInsertQueue()
-	itemQueue = storage.NewInsertQueue()
-	purchaseQueue = storage.NewInsertQueue()
+func startCollectors() {
+	collectorsDone = new(sync.WaitGroup)
+	sessionQueue = storage.NewInsertQueue(collectorsDone)
+	userQueue = storage.NewInsertQueue(collectorsDone)
+	itemQueue = storage.NewInsertQueue(collectorsDone)
+	purchaseQueue = storage.NewInsertQueue(collectorsDone)
+}
+
+func stopCollectors() {
+	close(sessionQueue.Chan)
+	close(userQueue.Chan)
+	close(itemQueue.Chan)
+	close(purchaseQueue.Chan)
+	collectorsDone.Wait()
 }
 
 func setupServer(dsn string) error {
@@ -67,7 +80,7 @@ func setupServer(dsn string) error {
 		return err
 	}
 
-	setupCollector()
+	startCollectors()
 
 	// HTTP endpoints
 	router = mux.NewRouter()
