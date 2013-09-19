@@ -156,3 +156,4 @@ The flags are:
 ## TODO
 
 - Check program for race conditions
+- Don't discard data on Flush()
