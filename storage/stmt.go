@@ -30,6 +30,7 @@ func newStmtCache() *stmtCache {
 
 func (s *stmtCache) GetInsert(table Table, n int) (*sql.Stmt, error) {
 	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	stmt, ok := s.cache[table.Table()]
 
@@ -44,7 +45,6 @@ func (s *stmtCache) GetInsert(table Table, n int) (*sql.Stmt, error) {
 		s.cache[table.Table()] = stmt
 	}
 
-	s.mu.Unlock()
 	return stmt, nil
 }
 
