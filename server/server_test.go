@@ -27,7 +27,7 @@ func startServer() {
 		panic(err)
 	}
 
-	setupCollector()
+	startCollectors()
 
 	server = httptest.NewServer(nil)
 	serverAddr = server.Listener.Addr().String()
