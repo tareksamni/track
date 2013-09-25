@@ -49,13 +49,13 @@ func SetupDb(dsn string) (*sql.DB, error) {
 
 func createUserTable() (err error) {
 	q := `CREATE TABLE IF NOT EXISTS UserEvent (
-	  AutoID int(10) unsigned NOT NULL AUTO_INCREMENT,
+	  EventID int(10) unsigned NOT NULL AUTO_INCREMENT,
 	  Region varchar(2) COLLATE utf8_unicode_ci NOT NULL,
 	  ProfileID int(11) NOT NULL,
 	  Referrer varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
 	  Message varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
 	  Created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	  PRIMARY KEY (AutoID)
+	  PRIMARY KEY (EventID)
 	) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci`
 	_, err = Db.Exec(q)
 	return err
@@ -63,7 +63,7 @@ func createUserTable() (err error) {
 
 func createSessionTable() (err error) {
 	q := `CREATE TABLE IF NOT EXISTS SessionEvent (
-	  AutoID int(10) unsigned NOT NULL AUTO_INCREMENT,
+	  EventID int(10) unsigned NOT NULL AUTO_INCREMENT,
 	  Region varchar(2) COLLATE utf8_unicode_ci NOT NULL,
 	  SessionID varchar(32) COLLATE utf8_unicode_ci NOT NULL,
 	  ProfileID int(11) DEFAULT NULL,
@@ -71,7 +71,7 @@ func createSessionTable() (err error) {
 	  SessionType varchar(32) COLLATE utf8_unicode_ci NOT NULL,
 	  Message varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
 	  Created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	  PRIMARY KEY (AutoID)
+	  PRIMARY KEY (EventID)
 	) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci`
 	_, err = Db.Exec(q)
 	return err
@@ -79,7 +79,7 @@ func createSessionTable() (err error) {
 
 func createItemTable() (err error) {
 	q := `CREATE TABLE IF NOT EXISTS ItemEvent (
-	  AutoID int(10) unsigned NOT NULL AUTO_INCREMENT,
+	  EventID int(10) unsigned NOT NULL AUTO_INCREMENT,
 	  Region varchar(2) COLLATE utf8_unicode_ci NOT NULL,
 	  ProfileID int(11) NOT NULL,
 	  ItemName varchar(64) COLLATE utf8_unicode_ci NOT NULL,
@@ -88,7 +88,7 @@ func createItemTable() (err error) {
 	  PriceGold int(11) DEFAULT NULL,
 	  PriceSilver int(11) DEFAULT NULL,
 	  Created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	  PRIMARY KEY (AutoID)
+	  PRIMARY KEY (EventID)
 	) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci`
 	_, err = Db.Exec(q)
 	return err
@@ -96,7 +96,7 @@ func createItemTable() (err error) {
 
 func createPurchaseTable() (err error) {
 	q := `CREATE TABLE IF NOT EXISTS PurchaseEvent (
-	  AutoID int(10) unsigned NOT NULL AUTO_INCREMENT,
+	  EventID int(10) unsigned NOT NULL AUTO_INCREMENT,
 	  Region varchar(2) COLLATE utf8_unicode_ci NOT NULL,
 	  ProfileID int(11) NOT NULL,
 	  Currency varchar(3) COLLATE utf8_unicode_ci NOT NULL,
@@ -105,7 +105,7 @@ func createPurchaseTable() (err error) {
 	  PaymentProvider varchar(45) COLLATE utf8_unicode_ci NOT NULL,
 	  Product varchar(45) COLLATE utf8_unicode_ci NOT NULL,
 	  Created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	  PRIMARY KEY (AutoID)
+	  PRIMARY KEY (EventID)
 	) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci`
 	_, err = Db.Exec(q)
 	return err
