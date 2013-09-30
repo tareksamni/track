@@ -102,6 +102,7 @@ type Item struct {
 	ItemName    string
 	ItemType    string
 	IsUGC       bool
+	IsRented    bool
 	PriceGold   int
 	PriceSilver int
 	Created     time.Time `schema:"-"`
@@ -112,11 +113,11 @@ func (i *Item) Table() string {
 }
 
 func (i *Item) Columns() []string {
-	return []string{"Region", "ProfileID", "ItemName", "ItemType", "IsUGC", "PriceGold", "PriceSilver", "Created"}
+	return []string{"Region", "ProfileID", "ItemName", "ItemType", "IsUGC", "IsRented", "PriceGold", "PriceSilver", "Created"}
 }
 
 func (i *Item) Values() []interface{} {
-	return []interface{}{i.Region, i.ProfileID, i.ItemName, i.ItemType, i.IsUGC, i.PriceGold, i.PriceSilver, i.Created}
+	return []interface{}{i.Region, i.ProfileID, i.ItemName, i.ItemType, i.IsUGC, i.IsRented, i.PriceGold, i.PriceSilver, i.Created}
 }
 
 func (i *Item) Validate() error {

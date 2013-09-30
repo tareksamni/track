@@ -85,6 +85,7 @@ func createItemTable() (err error) {
 	  ItemName varchar(64) COLLATE utf8_unicode_ci NOT NULL,
 	  ItemType varchar(45) COLLATE utf8_unicode_ci NOT NULL,
 	  IsUGC tinyint(1) NOT NULL,
+	  IsRented tinyint(1) NOT NULL DEFAULT '0',
 	  PriceGold int(11) DEFAULT NULL,
 	  PriceSilver int(11) DEFAULT NULL,
 	  Created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
