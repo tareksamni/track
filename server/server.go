@@ -28,6 +28,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 	"sync"
 
 	"github.com/gorilla/mux"
@@ -46,8 +47,7 @@ var (
 
 func sigTrapCloser(l net.Listener) {
 	c := make(chan os.Signal, 1)
-	// TODO: Handle more Unix signals
-	signal.Notify(c, os.Interrupt, os.Kill)
+	signal.Notify(c, syscall.SIGINT, syscall.SIGKILL, syscall.SIGTERM, syscall.SIGHUP)
 
 	go func() {
 		for _ = range c {
