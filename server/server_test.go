@@ -9,8 +9,6 @@ import (
 	"strings"
 	"sync"
 	"testing"
-
-	"github.com/simonz05/track/util"
 )
 
 var (
@@ -20,7 +18,6 @@ var (
 )
 
 func startServer() {
-	util.LogLevel = 0
 	err := setupServer("travis@tcp(localhost:3306)/myapp_test?charset=utf8")
 
 	if err != nil {

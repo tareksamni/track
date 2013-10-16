@@ -33,7 +33,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/simonz05/track/storage"
-	"github.com/simonz05/track/util"
+	"github.com/simonz05/util/log"
 )
 
 var (
@@ -54,7 +54,7 @@ func sigTrapCloser(l net.Listener) {
 			stopCollectors()
 			// Once we close the listener the main loop will exit
 			l.Close()
-			util.Logf("Closed listener %s", l.Addr())
+			log.Printf("Closed listener %s", l.Addr())
 		}
 	}()
 }
@@ -105,10 +105,10 @@ func ListenAndServe(laddr, dsn string) error {
 		return err
 	}
 
-	util.Logf("Listen on %s", l.Addr())
+	log.Printf("Listen on %s", l.Addr())
 
 	sigTrapCloser(l)
 	err = http.Serve(l, nil)
-	util.Logf("Shutting down ..")
+	log.Printf("Shutting down ..")
 	return err
 }

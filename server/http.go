@@ -6,19 +6,19 @@ import (
 
 	"github.com/gorilla/schema"
 	"github.com/simonz05/track/storage"
-	"github.com/simonz05/track/util"
+	"github.com/simonz05/util/log"
 )
 
 var dataDecoder = schema.NewDecoder()
 
 func writeError(w http.ResponseWriter, err string, statusCode int) {
-	util.Logf("err: %v", err)
+	log.Printf("err: %v", err)
 	w.WriteHeader(statusCode)
 	w.Write([]byte(err))
 }
 
 func sessionHandle(w http.ResponseWriter, r *http.Request) {
-	util.Logf("Session Handle")
+	log.Printf("Session Handle")
 	ses := new(storage.Session)
 
 	if err := r.ParseForm(); err != nil {
@@ -42,7 +42,7 @@ func sessionHandle(w http.ResponseWriter, r *http.Request) {
 }
 
 func userHandle(w http.ResponseWriter, r *http.Request) {
-	util.Logf("User Handle")
+	log.Printf("User Handle")
 	user := new(storage.User)
 
 	if err := r.ParseForm(); err != nil {
@@ -55,7 +55,7 @@ func userHandle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	util.Logln(user)
+	log.Println(user)
 
 	if err := user.Validate(); err != nil {
 		writeError(w, err.Error(), 400)
@@ -68,7 +68,7 @@ func userHandle(w http.ResponseWriter, r *http.Request) {
 }
 
 func itemHandle(w http.ResponseWriter, r *http.Request) {
-	util.Logf("Item Handle")
+	log.Printf("Item Handle")
 	item := new(storage.Item)
 
 	if err := r.ParseForm(); err != nil {
@@ -81,7 +81,7 @@ func itemHandle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	util.Logln(item)
+	log.Println(item)
 
 	if err := item.Validate(); err != nil {
 		writeError(w, err.Error(), 400)
@@ -94,7 +94,7 @@ func itemHandle(w http.ResponseWriter, r *http.Request) {
 }
 
 func purchaseHandle(w http.ResponseWriter, r *http.Request) {
-	util.Logf("Purchase Handle")
+	log.Printf("Purchase Handle")
 	purchase := new(storage.Purchase)
 
 	if err := r.ParseForm(); err != nil {
@@ -113,7 +113,7 @@ func purchaseHandle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	purchase.Created = time.Now()
-	util.Logln(purchase)
+	log.Println(purchase)
 	purchaseQueue.Chan <- purchase
 	w.WriteHeader(201)
 }

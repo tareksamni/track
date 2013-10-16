@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/simonz05/track/util"
+	"github.com/simonz05/util/log"
 )
 
 type Queue struct {
@@ -32,11 +32,11 @@ func NewInsertQueue(done *sync.WaitGroup) *Queue {
 }
 
 func (q *Queue) collect() {
-	util.Logf("[%d] Queue Starting …", q.ref)
+	log.Printf("[%d] Queue Starting …", q.ref)
 	defer q.onExit()
 
 	if q.buf == nil {
-		util.Errln("InsertBuffer was nil")
+		log.Errorln("InsertBuffer was nil")
 		return
 	}
 
@@ -49,27 +49,27 @@ func (q *Queue) collect() {
 				return
 			}
 
-			util.Logf("Got Table Record")
+			log.Printf("Got Table Record")
 			err = q.buf.Add(v)
 		case <-time.After(time.Second * 1):
 			err = q.buf.Flush()
 		}
 
 		if err != nil {
-			util.Errf("Storage Err %v", err)
+			log.Errorf("Storage Err %v", err)
 		}
 	}
 }
 
 func (q *Queue) onExit() {
-	util.Logf("[%d] Queue Exit Started", q.ref)
+	log.Printf("[%d] Queue Exit Started", q.ref)
 
 	if q.buf != nil {
 		if err := q.buf.Flush(); err != nil {
-			util.Errf("[%d] Queue Exit ERR %v", q.ref, err)
+			log.Errorf("[%d] Queue Exit ERR %v", q.ref, err)
 		}
 	}
 
-	util.Logf("[%d] Queue Exit OK", q.ref)
+	log.Printf("[%d] Queue Exit OK", q.ref)
 	q.done.Done()
 }

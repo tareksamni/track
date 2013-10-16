@@ -3,21 +3,18 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"runtime"
 	"runtime/pprof"
 
 	"github.com/simonz05/track/server"
-	"github.com/simonz05/track/util"
+	"github.com/simonz05/util/log"
 )
 
 var (
-	verbose    = flag.Bool("v", false, "verbose mode")
 	help       = flag.Bool("h", false, "show help text")
-	laddr      = flag.String("http", ":8080", "set bind address for the HTTP server")
+	laddr      = flag.String("http", ":6062", "set bind address for the HTTP server")
 	dsn        = flag.String("dsn", "testing:testing@tcp(localhost:3306)/testing?utf8", "MySQL Data Source Name")
-	logLevel   = flag.Int("log", 0, "set log level")
 	version    = flag.Bool("version", false, "show version number and exit")
 	cpuprofile = flag.String("debug.cpuprofile", "", "write cpu profile to file")
 )
@@ -33,6 +30,7 @@ func usage() {
 func main() {
 	flag.Usage = usage
 	flag.Parse()
+	log.Println("start track service …")
 
 	if *version {
 		fmt.Fprintln(os.Stdout, Version)
@@ -50,12 +48,6 @@ func main() {
 	}
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
-
-	if *verbose {
-		util.LogLevel = 2
-	} else {
-		util.LogLevel = *logLevel
-	}
 
 	if *cpuprofile != "" {
 		f, err := os.Create(*cpuprofile)

@@ -28,14 +28,16 @@
 // 
 // The flags are:
 // 
-//     -v
-//             verbose mode
 //     -h
 //             help text
-//     -http=":8080"
+//     -http=":6062"
 //             set bind address for the HTTP server
-//     -log=0
-//             set log level
+//     -log=0: 
+//             log level
+//     -log-file="": 
+//             If non-empty, write log to this file
+//     -log-raven-dsn="": 
+//             If non-empty, write to raven dsn
 //     -dsn=""
 //             MySQL data source name
 //     -version=false
