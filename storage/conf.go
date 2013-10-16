@@ -50,7 +50,7 @@ func SetupDb(dsn string) (*sql.DB, error) {
 func createUserTable() (err error) {
 	q := `CREATE TABLE IF NOT EXISTS UserEvent (
 	  EventID int(10) unsigned NOT NULL AUTO_INCREMENT,
-	  Region varchar(2) COLLATE utf8_unicode_ci NOT NULL,
+	  Region varchar(8) COLLATE utf8_unicode_ci NOT NULL,
 	  ProfileID int(11) NOT NULL,
 	  Referrer varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
 	  Message varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -64,7 +64,7 @@ func createUserTable() (err error) {
 func createSessionTable() (err error) {
 	q := `CREATE TABLE IF NOT EXISTS SessionEvent (
 	  EventID int(10) unsigned NOT NULL AUTO_INCREMENT,
-	  Region varchar(2) COLLATE utf8_unicode_ci NOT NULL,
+	  Region varchar(8) COLLATE utf8_unicode_ci NOT NULL,
 	  SessionID varchar(32) COLLATE utf8_unicode_ci NOT NULL,
 	  ProfileID int(11) DEFAULT NULL,
 	  RemoteIP varchar(45) COLLATE utf8_unicode_ci NOT NULL,
@@ -80,7 +80,7 @@ func createSessionTable() (err error) {
 func createItemTable() (err error) {
 	q := `CREATE TABLE IF NOT EXISTS ItemEvent (
 	  EventID int(10) unsigned NOT NULL AUTO_INCREMENT,
-	  Region varchar(2) COLLATE utf8_unicode_ci NOT NULL,
+	  Region varchar(8) COLLATE utf8_unicode_ci NOT NULL,
 	  ProfileID int(11) NOT NULL,
 	  ItemName varchar(64) COLLATE utf8_unicode_ci NOT NULL,
 	  ItemType varchar(45) COLLATE utf8_unicode_ci NOT NULL,
@@ -98,7 +98,7 @@ func createItemTable() (err error) {
 func createPurchaseTable() (err error) {
 	q := `CREATE TABLE IF NOT EXISTS PurchaseEvent (
 	  EventID int(10) unsigned NOT NULL AUTO_INCREMENT,
-	  Region varchar(2) COLLATE utf8_unicode_ci NOT NULL,
+	  Region varchar(8) COLLATE utf8_unicode_ci NOT NULL,
 	  ProfileID int(11) NOT NULL,
 	  Currency varchar(3) COLLATE utf8_unicode_ci NOT NULL,
 	  GrossAmount decimal(10,2) NOT NULL,
