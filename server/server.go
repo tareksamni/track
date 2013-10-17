@@ -28,8 +28,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"syscall"
 	"sync"
+	"syscall"
 
 	"github.com/gorilla/mux"
 	"github.com/simonz05/track/storage"

@@ -3,6 +3,7 @@ package storage
 import (
 	"errors"
 	"regexp"
+	"math/big"
 	"time"
 )
 
@@ -153,8 +154,8 @@ type Purchase struct {
 	ProfileID       int
 	Region          string
 	Currency        string
-	GrossAmount     int
-	NetAmount       int
+	GrossAmount     *big.Rat
+	NetAmount       *big.Rat
 	PaymentProvider string
 	Product         string
 	Created         time.Time `schema:"-"`
@@ -173,7 +174,7 @@ func (p *Purchase) Columns() []string {
 }
 
 func (p *Purchase) Values() []interface{} {
-	return []interface{}{p.Region, p.ProfileID, p.Currency, p.GrossAmount, p.NetAmount, p.PaymentProvider, p.Product, p.Created}
+	return []interface{}{p.Region, p.ProfileID, p.Currency, p.GrossAmount.FloatString(2), p.NetAmount.FloatString(2), p.PaymentProvider, p.Product, p.Created}
 }
 
 func (p *Purchase) Validate() error {
@@ -181,7 +182,7 @@ func (p *Purchase) Validate() error {
 		return InvalidRegionErr
 	}
 
-	if p.ProfileID == 0 || p.Currency == "" || p.GrossAmount == 0 || p.NetAmount == 0 || p.PaymentProvider == "" || p.Product == "" {
+	if p.ProfileID == 0 || p.Currency == "" || p.PaymentProvider == "" || p.Product == "" {
 		return RequiredFieldErr
 	}
 

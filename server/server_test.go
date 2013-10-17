@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -9,6 +10,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 )
 
 var (
@@ -56,12 +58,12 @@ type ItemTest struct {
 	PriceSilver int
 }
 
-type PruchaseTest struct {
+type PurchaseTest struct {
 	ProfileID       int
 	Region          string
 	Currency        string
-	GrossAmount     int
-	NetAmount       int
+	GrossAmount     string
+	NetAmount       string
 	PaymentProvider string
 	Product         string
 }
@@ -87,12 +89,33 @@ func TestSession(t *testing.T) {
 			SessionID:   "abc",
 			RemoteIP:    "127.0.0.1",
 			SessionType: "session type"}, 201},
-
 	}
 
 	for i, x := range tests {
 		doHttp(t, i, "session", x.Data, x.StatusCode)
 	}
+}
+
+func TestPurchase(t *testing.T) {
+	once.Do(startServer)
+
+	tests := []*TestCase{
+		{&PurchaseTest{
+			ProfileID:       1,
+			Region:          "BR",
+			Currency:        "USD",
+			GrossAmount:     "1.99",
+			NetAmount:       "1.27",
+			PaymentProvider: "PayPal",
+			Product:         "100 Gold",
+		}, 201},
+	}
+
+	for i, x := range tests {
+		doHttp(t, i, "purchase", x.Data, x.StatusCode)
+	}
+
+	time.Sleep(1e09 * 3)
 }
 
 func doHttp(t *testing.T, index int, endpoint string, data interface{}, statusCode int) {
@@ -116,7 +139,8 @@ func doHttp(t *testing.T, index int, endpoint string, data interface{}, statusCo
 
 	client := &http.Client{}
 	r, err := client.Do(req)
-	fmt.Println(values.Encode())
+	defer r.Body.Close()
+	//fmt.Println(values.Encode())
 
 	if err != nil {
 		t.Fatalf("error posting: %s", err)
@@ -124,6 +148,9 @@ func doHttp(t *testing.T, index int, endpoint string, data interface{}, statusCo
 	}
 
 	if r.StatusCode != statusCode {
+		//fmt.Println(r.Body)
+		body, _ := ioutil.ReadAll(r.Body)
+		fmt.Printf("%s\n", body)
 		t.Fatalf("expected status code %d, got %d", statusCode, r.StatusCode)
 	}
 }

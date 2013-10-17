@@ -1,14 +1,33 @@
 package server
 
 import (
+	"math/big"
 	"net/http"
+	"reflect"
 
 	"github.com/gorilla/schema"
 	"github.com/simonz05/track/storage"
 	"github.com/simonz05/util/log"
 )
 
-var dataDecoder = schema.NewDecoder()
+var (
+	invalidValue = reflect.Value{}
+	dataDecoder  = schema.NewDecoder()
+)
+
+func init() {
+	dataDecoder.RegisterConverter(big.Rat{}, convertRat)
+}
+
+func convertRat(value string) reflect.Value {
+	r := new(big.Rat)
+
+	if v, ok := r.SetString(value); ok {
+		return reflect.ValueOf(*v)
+	}
+
+	return invalidValue
+}
 
 func writeError(w http.ResponseWriter, err string, statusCode int) {
 	log.Errorf("err: %v", err)
