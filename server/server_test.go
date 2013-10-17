@@ -81,6 +81,13 @@ func TestSession(t *testing.T) {
 			SessionID:   "abc",
 			RemoteIP:    "127.0.0.1",
 			SessionType: "session type"}, 201},
+		{&SessionTest{
+			ProfileID:   2,
+			Region:      "BR",
+			SessionID:   "abc",
+			RemoteIP:    "127.0.0.1",
+			SessionType: "session type"}, 201},
+
 	}
 
 	for i, x := range tests {

@@ -28,7 +28,12 @@ type Validator interface {
 	Validate() error
 }
 
-var regionValidator = regexp.MustCompile("^[a-zA-Z]{2,3}$")
+type TableValidator interface {
+	TableRecord
+	Validator
+}
+
+var regionValidator = regexp.MustCompile("^[a-zA-Z]{2,16}$")
 
 type Session struct {
 	ProfileID   int       // 100
@@ -38,6 +43,10 @@ type Session struct {
 	SessionType string    // Web
 	Message     string    // PageView
 	Created     time.Time `schema:"-"`
+}
+
+func NewSession() *Session {
+	return &Session{Created: time.Now().UTC()}
 }
 
 func (s *Session) Table() string {
@@ -70,6 +79,10 @@ type User struct {
 	Referrer  string
 	Message   string
 	Created   time.Time `schema:"-"`
+}
+
+func NewUser() *User {
+	return &User{Created: time.Now().UTC()}
 }
 
 func (u *User) Table() string {
@@ -108,6 +121,10 @@ type Item struct {
 	Created     time.Time `schema:"-"`
 }
 
+func NewItem() *Item {
+	return &Item{Created: time.Now().UTC()}
+}
+
 func (i *Item) Table() string {
 	return "ItemEvent"
 }
@@ -141,6 +158,10 @@ type Purchase struct {
 	PaymentProvider string
 	Product         string
 	Created         time.Time `schema:"-"`
+}
+
+func NewPurchase() *Purchase {
+	return &Purchase{Created: time.Now().UTC()}
 }
 
 func (p *Purchase) Table() string {
