@@ -21,22 +21,22 @@
 
 // track is an event collection HTTP server for an in-house
 // analytics service.
-// 
+//
 // Usage:
-// 
+//
 //     track [flag]
-// 
+//
 // The flags are:
-// 
+//
 //     -h
 //             help text
 //     -http=":6062"
 //             set bind address for the HTTP server
-//     -log=0: 
+//     -log=0:
 //             log level
-//     -log-file="": 
+//     -log-file="":
 //             If non-empty, write log to this file
-//     -log-raven-dsn="": 
+//     -log-raven-dsn="":
 //             If non-empty, write to raven dsn
 //     -dsn=""
 //             MySQL data source name
@@ -44,137 +44,137 @@
 //             display version number and exit
 //     -debug.cpuprofile=""
 //             run cpu profiler
-// 
+//
 // API
-// 
+//
 // Track Session
-// 
+//
 //     POST /api/1.0/track/session/
-// 
+//
 // **Parameters**
-// 
-//     Region      
+//
+//     Region
 //         string  Required
-// 
-//     SessionID   
+//
+//     SessionID
 //         string  Required
-// 
-//     RemoteIP    
+//
+//     RemoteIP
 //         string  Required
-// 
+//
 //     SessionType
 //         string  Required
-// 
+//
 //     Message
 //         string  Optional
-// 
-//     ProfileID   
+//
+//     ProfileID
 //         int     Optional
-// 
+//
 // **Response**
-// 
+//
 //     HTTP/1.1 201 Created
 //     Date: Mon, 12 Aug 2013 09:37:17 GMT
 //     Content-Length: 0
 //     Content-Type: text/plain; charset=utf-8
-// 
+//
 // Track User
-// 
+//
 //     POST /api/1.0/track/user/
-// 
+//
 // **Parameters**
-// 
-//     ProfileID   
+//
+//     ProfileID
 //         int     Required
-// 
-//     Region      
+//
+//     Region
 //         string  Required
-// 
-//     Referrer    
+//
+//     Referrer
 //         string  Optional
-// 
+//
 //     Message
 //         string  Optional
-// 
+//
 // **Response**
-// 
+//
 //     HTTP/1.1 201 Created
 //     Date: Mon, 12 Aug 2013 09:37:17 GMT
 //     Content-Length: 0
 //     Content-Type: text/plain; charset=utf-8
-// 
+//
 // Track Item
-// 
+//
 //     POST /api/1.0/track/item/
-// 
+//
 // **Parameters**
-// 
-//     ProfileID   
+//
+//     ProfileID
 //         int     Required
-// 
-//     Region      
+//
+//     Region
 //         string  Required
-// 
-//     ItemName    
+//
+//     ItemName
 //         string  Required
-// 
-//     ItemType    
+//
+//     ItemType
 //         string  Required
-// 
-//     IsUGC    
+//
+//     IsUGC
 //         bool    Required
-// 
-//     PriceGold    
+//
+//     PriceGold
 //         int     Optional
-// 
-//     PriceSilver    
+//
+//     PriceSilver
 //         int     Optional
-// 
+//
 // **Response**
-// 
+//
 //     HTTP/1.1 201 Created
 //     Date: Mon, 12 Aug 2013 09:37:17 GMT
 //     Content-Length: 0
 //     Content-Type: text/plain; charset=utf-8
-// 
-// 
+//
+//
 // Track Purchase
-// 
+//
 //     POST /api/1.0/track/purchase/
-// 
+//
 // **Parameters**
-// 
-//     ProfileID   
+//
+//     ProfileID
 //         int     Required
-// 
-//     Region      
+//
+//     Region
 //         string  Required
-// 
-//     Currency    
+//
+//     Currency
 //         string  Required
-// 
-//     GrossAmount    
+//
+//     GrossAmount
 //         int     Required
-// 
-//     NetAmount    
+//
+//     NetAmount
 //         int     Required
-// 
-//     PaymentProvider    
+//
+//     PaymentProvider
 //         string  Required
-// 
-//     Product    
+//
+//     Product
 //         string  Required
-// 
+//
 // **Response**
-// 
+//
 //     HTTP/1.1 201 Created
 //     Date: Mon, 12 Aug 2013 09:37:17 GMT
 //     Content-Length: 0
 //     Content-Type: text/plain; charset=utf-8
-// 
+//
 // TODO
-// 
+//
 // - Correctly close down, cleanup and flush.
 // - Check program for race conditions
-// 
+//
 package main

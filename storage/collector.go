@@ -17,17 +17,22 @@ type Queue struct {
 var ref int
 
 func NewInsertQueue(done *sync.WaitGroup) *Queue {
-	ref += 1
+	qu := make(chan TableRecord, 256)
+	var q *Queue
 
-	q := &Queue{
-		ref:  ref,
-		done: done,
-		Chan: make(chan TableRecord, 100),
-		buf:  NewInsertBuffer(insertBufSize),
+	for i := 0; i < 128; i++ {
+		ref += 1
+		q = &Queue{
+			ref:  ref,
+			done: done,
+			Chan: qu,
+			buf:  NewInsertBuffer(insertBufSize, false),
+		}
+		done.Add(1)
+		go q.collect()
 	}
 
-	done.Add(1)
-	go q.collect()
+	// only public field is shared among all workers
 	return q
 }
 

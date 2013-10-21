@@ -2,8 +2,8 @@ package storage
 
 import (
 	"errors"
-	"regexp"
 	"math/big"
+	"regexp"
 	"time"
 )
 

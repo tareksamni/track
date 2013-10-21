@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"runtime/pprof"
 
+	"git.tideland.biz/goas/monitoring"
 	"github.com/simonz05/track/server"
 	"github.com/simonz05/util/log"
 )
@@ -61,6 +62,8 @@ func main() {
 	err := server.ListenAndServe(*laddr, *dsn)
 
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 	}
+
+	monitoring.MeasuringPointsPrintAll()
 }
