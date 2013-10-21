@@ -32,8 +32,10 @@ func (s *InsertBuffer) Flush() (err error) {
 		}()
 	} else {
 		m := monitoring.BeginMeasuring("flush-insert-buffer")
-		err = InsertMulti(s.buf)
-		m.EndMeasuring()
+		defer m.EndMeasuring()
+		if err = InsertMulti(s.buf); err != nil {
+			return
+		}
 	}
 
 	for i := 0; i < len(s.buf); i++ {
