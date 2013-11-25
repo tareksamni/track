@@ -109,6 +109,24 @@ func TestPurchase(t *testing.T) {
 			PaymentProvider: "PayPal",
 			Product:         "100 Gold",
 		}, 201},
+		{&PurchaseTest{
+			ProfileID:       1,
+			Region:          "",
+			Currency:        "USD",
+			GrossAmount:     "1.99",
+			NetAmount:       "1.27",
+			PaymentProvider: "PayPal",
+			Product:         "100 Gold",
+		}, 400},
+		{&PurchaseTest{
+			ProfileID:       1,
+			Region:          "BR",
+			Currency:        "",
+			GrossAmount:     "1.99",
+			NetAmount:       "1.27",
+			PaymentProvider: "PayPal",
+			Product:         "100 Gold",
+		}, 400},
 	}
 
 	for i, x := range tests {
@@ -148,7 +166,6 @@ func doHttp(t *testing.T, index int, endpoint string, data interface{}, statusCo
 	}
 
 	if r.StatusCode != statusCode {
-		//fmt.Println(r.Body)
 		body, _ := ioutil.ReadAll(r.Body)
 		fmt.Printf("%s\n", body)
 		t.Fatalf("expected status code %d, got %d", statusCode, r.StatusCode)

@@ -2,14 +2,18 @@ package storage
 
 import (
 	"errors"
+	"fmt"
 	"math/big"
 	"regexp"
 	"time"
 )
 
-var typeErr = errors.New("Invalid Type")
-var InvalidRegionErr = errors.New("Invalid Region")
-var RequiredFieldErr = errors.New("Required Field was empty")
+var (
+	typeErr          = errors.New("Invalid Type")
+	InvalidRegionErr = errors.New("Invalid Region")
+	RequiredFieldErr = errors.New("Required Field was empty")
+	requiredFieldFmt = "Required Field %s.%s was empty"
+)
 
 type Table interface {
 	Table() string
@@ -67,8 +71,12 @@ func (s *Session) Validate() error {
 		return InvalidRegionErr
 	}
 
-	if s.SessionID == "" || s.RemoteIP == "" || s.SessionType == "" {
-		return RequiredFieldErr
+	if s.SessionID == "" {
+		return fmt.Errorf(requiredFieldFmt, "Session", "SessionID")
+	} else if s.RemoteIP == "" {
+		return fmt.Errorf(requiredFieldFmt, "Session", "RemoteIP")
+	} else if s.SessionType == "" {
+		return fmt.Errorf(requiredFieldFmt, "Session", "RemoteIP")
 	}
 
 	return nil
@@ -104,7 +112,7 @@ func (u *User) Validate() error {
 	}
 
 	if u.ProfileID == 0 {
-		return RequiredFieldErr
+		return fmt.Errorf(requiredFieldFmt, "User", "ProfileID")
 	}
 
 	return nil
@@ -143,8 +151,12 @@ func (i *Item) Validate() error {
 		return InvalidRegionErr
 	}
 
-	if i.ProfileID == 0 || i.ItemName == "" || i.ItemType == "" {
-		return RequiredFieldErr
+	if i.ProfileID == 0 {
+		return fmt.Errorf(requiredFieldFmt, "Item", "ProfileID")
+	} else if i.ItemName == "" {
+		return fmt.Errorf(requiredFieldFmt, "Item", "ItemName")
+	} else if i.ItemType == "" {
+		return fmt.Errorf(requiredFieldFmt, "Item", "ItemType")
 	}
 
 	return nil
@@ -182,8 +194,14 @@ func (p *Purchase) Validate() error {
 		return InvalidRegionErr
 	}
 
-	if p.ProfileID == 0 || p.Currency == "" || p.PaymentProvider == "" || p.Product == "" {
-		return RequiredFieldErr
+	if p.ProfileID == 0 {
+		return fmt.Errorf(requiredFieldFmt, "Purchase", "ProfileID")
+	} else if p.Currency == "" {
+		return fmt.Errorf(requiredFieldFmt, "Purchase", "Currency")
+	} else if p.PaymentProvider == "" {
+		return fmt.Errorf(requiredFieldFmt, "Purchase", "PaymentProvider")
+	} else if p.Product == "" {
+		return fmt.Errorf(requiredFieldFmt, "Purchase", "Product")
 	}
 
 	return nil
