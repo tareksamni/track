@@ -17,7 +17,7 @@ type Queue struct {
 var ref int
 
 func NewInsertQueue(done *sync.WaitGroup) *Queue {
-	qu := make(chan TableRecord, 256)
+	qu := make(chan TableRecord, 16)
 	var q *Queue
 
 	for i := 0; i < 128; i++ {
