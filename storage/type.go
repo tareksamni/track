@@ -29,6 +29,10 @@ type TableRecord interface {
 	Record
 }
 
+func String(t TableRecord) string {
+	return fmt.Sprintf("%s - %s - %v", t.Table(), t.Columns(), t.Values())
+}
+
 type Validator interface {
 	Validate() error
 }
@@ -186,7 +190,7 @@ func (p *Purchase) Columns() []string {
 }
 
 func (p *Purchase) Values() []interface{} {
-	return []interface{}{p.Region, p.ProfileID, p.Currency, p.GrossAmount.FloatString(2), p.NetAmount.FloatString(2), p.PaymentProvider, p.Product, p.Created}
+	return []interface{}{p.Region, p.ProfileID, p.Currency, p.GrossAmount.FloatString(4), p.NetAmount.FloatString(4), p.PaymentProvider, p.Product, p.Created}
 }
 
 func (p *Purchase) Validate() error {

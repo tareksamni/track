@@ -11,6 +11,8 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/simonz05/util/log"
 )
 
 var (
@@ -28,6 +30,7 @@ func startServer() {
 
 	startCollectors()
 
+	log.Severity = 2
 	server = httptest.NewServer(nil)
 	serverAddr = server.Listener.Addr().String()
 }

@@ -17,10 +17,10 @@ type Queue struct {
 var ref int
 
 func NewInsertQueue(done *sync.WaitGroup) *Queue {
-	qu := make(chan TableRecord, 16)
+	qu := make(chan TableRecord, 128)
 	var q *Queue
 
-	for i := 0; i < 128; i++ {
+	for i := 0; i < 4; i++ {
 		ref += 1
 		q = &Queue{
 			ref:  ref,
@@ -54,7 +54,7 @@ func (q *Queue) collect() {
 				return
 			}
 
-			log.Printf("Got Table Record")
+			log.Printf("Got Table Record %v", String(v))
 			err = q.buf.Add(v)
 		case <-time.After(time.Second * 1):
 			err = q.buf.Flush()
