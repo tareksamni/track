@@ -84,10 +84,10 @@ func setupServer(dsn string) error {
 
 	// HTTP endpoints
 	router = mux.NewRouter()
-	router.HandleFunc("/api/1.0/track/session/", makeSesHandler()).Methods("POST").Name("session")
-	router.HandleFunc("/api/1.0/track/user/", makeUserHandler()).Methods("POST").Name("user")
-	router.HandleFunc("/api/1.0/track/item/", makeItemHandler()).Methods("POST").Name("item")
-	router.HandleFunc("/api/1.0/track/purchase/", makePurchaseHandler()).Methods("POST").Name("purchase")
+	router.HandleFunc("/v1/track/session/", makeSesHandler()).Methods("POST").Name("session")
+	router.HandleFunc("/v1/track/user/", makeUserHandler()).Methods("POST").Name("user")
+	router.HandleFunc("/v1/track/item/", makeItemHandler()).Methods("POST").Name("item")
+	router.HandleFunc("/v1/track/purchase/", makePurchaseHandler()).Methods("POST").Name("purchase")
 	router.StrictSlash(false)
 	http.Handle("/", router)
 

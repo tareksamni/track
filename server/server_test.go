@@ -132,7 +132,7 @@ func doHttp(t *testing.T, index int, endpoint string, data interface{}, statusCo
 	}
 
 	params := strings.NewReader(values.Encode())
-	uri = fmt.Sprintf("http://%s/api/1.0/track/%s/", serverAddr, endpoint)
+	uri = fmt.Sprintf("http://%s/v1/track/%s/", serverAddr, endpoint)
 
 	req, _ := http.NewRequest("POST", uri, params)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -165,7 +165,7 @@ func BenchmarkServer(b *testing.B) {
 	values.Add("SessionType", "session type")
 
 	params := strings.NewReader(values.Encode())
-	uri := fmt.Sprintf("http://%s/api/1.0/track/session/", serverAddr)
+	uri := fmt.Sprintf("http://%s/v1/track/session/", serverAddr)
 
 	client := &http.Client{}
 
