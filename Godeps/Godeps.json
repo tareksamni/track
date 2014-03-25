@@ -1,0 +1,54 @@
+{
+	"ImportPath": "github.com/simonz05/track",
+	"GoVersion": "go1.2",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "git.tideland.biz/goas/errors",
+			"Comment": "v2.3.0",
+			"Rev": "e149ed628422e700c9ed79c0614356769807934a"
+		},
+		{
+			"ImportPath": "git.tideland.biz/goas/logger",
+			"Comment": "v2.3.0",
+			"Rev": "e149ed628422e700c9ed79c0614356769807934a"
+		},
+		{
+			"ImportPath": "git.tideland.biz/goas/loop",
+			"Comment": "v2.3.0",
+			"Rev": "e149ed628422e700c9ed79c0614356769807934a"
+		},
+		{
+			"ImportPath": "git.tideland.biz/goas/monitoring",
+			"Comment": "v2.3.0",
+			"Rev": "e149ed628422e700c9ed79c0614356769807934a"
+		},
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.0-217-g0b11020",
+			"Rev": "0b11020cec264915fd090256a3b23256f96cc3ae"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "1be7a086a5fd6440ef16fe96baeda0c78282b980"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "9ede152210fa25c1377d33e867cb828c19316445"
+		},
+		{
+			"ImportPath": "github.com/gorilla/schema",
+			"Rev": "d3c95d3a81cc36ae15a05adfb3d427c9304e9376"
+		},
+		{
+			"ImportPath": "github.com/simonz05/util/log",
+			"Rev": "4f5b4cc8a5260760d06320635bf452f5ee34e48d"
+		},
+		{
+			"ImportPath": "github.com/simonz05/util/raven",
+			"Rev": "4f5b4cc8a5260760d06320635bf452f5ee34e48d"
+		}
+	]
+}
