@@ -26,6 +26,11 @@ import (
 )
 
 var (
+	user      string
+	pass      string
+	prot      string
+	addr      string
+	dbname    string
 	dsn       string
 	netAddr   string
 	available bool
@@ -43,17 +48,18 @@ var (
 
 // See https://github.com/go-sql-driver/mysql/wiki/Testing
 func init() {
+	// get environment variables
 	env := func(key, defaultValue string) string {
 		if value := os.Getenv(key); value != "" {
 			return value
 		}
 		return defaultValue
 	}
-	user := env("MYSQL_TEST_USER", "root")
-	pass := env("MYSQL_TEST_PASS", "")
-	prot := env("MYSQL_TEST_PROT", "tcp")
-	addr := env("MYSQL_TEST_ADDR", "localhost:3306")
-	dbname := env("MYSQL_TEST_DBNAME", "gotest")
+	user = env("MYSQL_TEST_USER", "root")
+	pass = env("MYSQL_TEST_PASS", "")
+	prot = env("MYSQL_TEST_PROT", "tcp")
+	addr = env("MYSQL_TEST_ADDR", "localhost:3306")
+	dbname = env("MYSQL_TEST_DBNAME", "gotest")
 	netAddr = fmt.Sprintf("%s(%s)", prot, addr)
 	dsn = fmt.Sprintf("%s:%s@%s/%s?timeout=30s&strict=true", user, pass, netAddr, dbname)
 	c, err := net.Dial(prot, addr)
@@ -827,7 +833,7 @@ func TestStrict(t *testing.T) {
 func TestTLS(t *testing.T) {
 	tlsTest := func(dbt *DBTest) {
 		if err := dbt.db.Ping(); err != nil {
-			if err == errNoTLS {
+			if err == ErrNoTLS {
 				dbt.Skip("Server does not support TLS")
 			} else {
 				dbt.Fatalf("Error on Ping: %s", err.Error())
@@ -936,6 +942,44 @@ func TestFailingCharset(t *testing.T) {
 			t.Fatalf("Connection must not succeed without a valid charset")
 		}
 	})
+}
+
+func TestCollation(t *testing.T) {
+	if !available {
+		t.Skipf("MySQL-Server not running on %s", netAddr)
+	}
+
+	defaultCollation := "utf8_general_ci"
+	testCollations := []string{
+		"",               // do not set
+		defaultCollation, // driver default
+		"latin1_general_ci",
+		"binary",
+		"utf8_unicode_ci",
+		"utf8mb4_general_ci",
+	}
+
+	for _, collation := range testCollations {
+		var expected, tdsn string
+		if collation != "" {
+			tdsn = dsn + "&collation=" + collation
+			expected = collation
+		} else {
+			tdsn = dsn
+			expected = defaultCollation
+		}
+
+		runTests(t, tdsn, func(dbt *DBTest) {
+			var got string
+			if err := dbt.db.QueryRow("SELECT @@collation_connection").Scan(&got); err != nil {
+				dbt.Fatal(err)
+			}
+
+			if got != expected {
+				dbt.Fatalf("Expected connection collation %s but got %s", expected, got)
+			}
+		})
+	}
 }
 
 func TestRawBytesResultExceedsBuffer(t *testing.T) {
@@ -1254,7 +1298,7 @@ func TestConcurrent(t *testing.T) {
 
 		var fatalError string
 		var once sync.Once
-		fatal := func(s string, vals ...interface{}) {
+		fatalf := func(s string, vals ...interface{}) {
 			once.Do(func() {
 				fatalError = fmt.Sprintf(s, vals...)
 			})
@@ -1269,7 +1313,7 @@ func TestConcurrent(t *testing.T) {
 
 				if err != nil {
 					if err.Error() != "Error 1040: Too many connections" {
-						fatal("Error on Conn %d: %s", id, err.Error())
+						fatalf("Error on Conn %d: %s", id, err.Error())
 					}
 					return
 				}
@@ -1277,13 +1321,13 @@ func TestConcurrent(t *testing.T) {
 				// keep the connection busy until all connections are open
 				for remaining > 0 {
 					if _, err = tx.Exec("DO 1"); err != nil {
-						fatal("Error on Conn %d: %s", id, err.Error())
+						fatalf("Error on Conn %d: %s", id, err.Error())
 						return
 					}
 				}
 
 				if err = tx.Commit(); err != nil {
-					fatal("Error on Conn %d: %s", id, err.Error())
+					fatalf("Error on Conn %d: %s", id, err.Error())
 					return
 				}
 
@@ -1301,4 +1345,26 @@ func TestConcurrent(t *testing.T) {
 
 		dbt.Logf("Reached %d concurrent connections\r\n", succeeded)
 	})
+}
+
+// Tests custom dial functions
+func TestCustomDial(t *testing.T) {
+	if !available {
+		t.Skipf("MySQL-Server not running on %s", netAddr)
+	}
+
+	// our custom dial function which justs wraps net.Dial here
+	RegisterDial("mydial", func(addr string) (net.Conn, error) {
+		return net.Dial(prot, addr)
+	})
+
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@mydial(%s)/%s?timeout=30s&strict=true", user, pass, addr, dbname))
+	if err != nil {
+		t.Fatalf("Error connecting: %s", err.Error())
+	}
+	defer db.Close()
+
+	if _, err = db.Exec("DO 1"); err != nil {
+		t.Fatalf("Connection failed: %s", err.Error())
+	}
 }

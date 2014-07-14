@@ -44,6 +44,8 @@ type ravenWriter struct {
 	c *raven.Client
 }
 
+// Write implements the io.Writer interface
 func (w *ravenWriter) Write(p []byte) (int, error) {
-	return len(p), w.c.Error(string(p))
+	go func() {w.c.Error(string(p))}()
+	return len(p), nil
 }

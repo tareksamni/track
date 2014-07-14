@@ -1,6 +1,6 @@
 // Tideland Go Application Support - Logger - Unit Tests
 //
-// Copyright (C) 2012-2014 Frank Mueller / Oldenburg / Germany
+// Copyright (C) 2012-2013 Frank Mueller / Oldenburg / Germany
 //
 // All rights reserved. Use of this source code is governed
 // by the new BSD license.
@@ -70,24 +70,7 @@ func TestGoLogger(t *testing.T) {
 	log.SetOutput(os.Stdout)
 
 	logger.SetLevel(logger.LevelDebug)
-	logger.SetLogger(logger.NewGoLogger())
-
-	logger.Debugf("Debug.")
-	logger.Infof("Info.")
-	logger.Warningf("Warning.")
-	logger.Errorf("Error.")
-	logger.Criticalf("Critical.")
-}
-
-// Test logging with the syslogger.
-func TestSysLogger(t *testing.T) {
-	assert := asserts.NewTestingAssertion(t, true)
-
-	logger.SetLevel(logger.LevelDebug)
-
-	sl, err := logger.NewSysLogger("GOAS")
-	assert.Nil(err)
-	logger.SetLogger(sl)
+	logger.SetLogger(logger.GoLogger{})
 
 	logger.Debugf("Debug.")
 	logger.Infof("Info.")

@@ -1,6 +1,6 @@
 // Tideland Go Application Support - Logger
 //
-// Copyright (C) 2012-2014 Frank Mueller / Oldenburg / Germany
+// Copyright (C) 2012-2013 Frank Mueller / Oldenburg / Germany
 //
 // All rights reserved. Use of this source code is governed
 // by the new BSD license.
@@ -15,7 +15,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"log/syslog"
 	"os"
 	"path"
 	"runtime"
@@ -28,13 +27,9 @@ import (
 // LOG LEVEL
 //--------------------
 
-// LogLevel describes the chosen log level between
-// debug and critical.
-type LogLevel int
-
 // Log levels to control the logging output.
 const (
-	LevelDebug LogLevel = iota
+	LevelDebug = iota
 	LevelInfo
 	LevelWarning
 	LevelError
@@ -42,15 +37,15 @@ const (
 )
 
 // logLevel is the global log level.
-var logLevel LogLevel = LevelInfo
+var logLevel = LevelInfo
 
 // Level returns the current log level.
-func Level() LogLevel {
+func Level() int {
 	return logLevel
 }
 
 // SetLevel switches to a new log level.
-func SetLevel(level LogLevel) {
+func SetLevel(level int) {
 	switch {
 	case level <= LevelDebug:
 		logLevel = LevelDebug
@@ -159,8 +154,9 @@ func (sl *StandardLogger) Debug(info, msg string) {
 	sl.mutex.Lock()
 	defer sl.mutex.Unlock()
 
+	io.WriteString(sl.out, "[D] ")
 	io.WriteString(sl.out, time.Now().Format(timeFormat))
-	io.WriteString(sl.out, " [DEBUG] ")
+	io.WriteString(sl.out, " ")
 	io.WriteString(sl.out, info)
 	io.WriteString(sl.out, " ")
 	io.WriteString(sl.out, msg)
@@ -172,8 +168,9 @@ func (sl *StandardLogger) Info(info, msg string) {
 	sl.mutex.Lock()
 	defer sl.mutex.Unlock()
 
+	io.WriteString(sl.out, "[I] ")
 	io.WriteString(sl.out, time.Now().Format(timeFormat))
-	io.WriteString(sl.out, " [INFO] ")
+	io.WriteString(sl.out, " ")
 	io.WriteString(sl.out, info)
 	io.WriteString(sl.out, " ")
 	io.WriteString(sl.out, msg)
@@ -185,8 +182,9 @@ func (sl *StandardLogger) Warning(info, msg string) {
 	sl.mutex.Lock()
 	defer sl.mutex.Unlock()
 
+	io.WriteString(sl.out, "[W] ")
 	io.WriteString(sl.out, time.Now().Format(timeFormat))
-	io.WriteString(sl.out, " [WARNING] ")
+	io.WriteString(sl.out, " ")
 	io.WriteString(sl.out, info)
 	io.WriteString(sl.out, " ")
 	io.WriteString(sl.out, msg)
@@ -198,8 +196,9 @@ func (sl *StandardLogger) Error(info, msg string) {
 	sl.mutex.Lock()
 	defer sl.mutex.Unlock()
 
+	io.WriteString(sl.out, "[E] ")
 	io.WriteString(sl.out, time.Now().Format(timeFormat))
-	io.WriteString(sl.out, " [ERROR] ")
+	io.WriteString(sl.out, " ")
 	io.WriteString(sl.out, info)
 	io.WriteString(sl.out, " ")
 	io.WriteString(sl.out, msg)
@@ -211,8 +210,9 @@ func (sl *StandardLogger) Critical(info, msg string) {
 	sl.mutex.Lock()
 	defer sl.mutex.Unlock()
 
+	io.WriteString(sl.out, "[C] ")
 	io.WriteString(sl.out, time.Now().Format(timeFormat))
-	io.WriteString(sl.out, " [CRITICAL] ")
+	io.WriteString(sl.out, " ")
 	io.WriteString(sl.out, info)
 	io.WriteString(sl.out, " ")
 	io.WriteString(sl.out, msg)
@@ -222,76 +222,29 @@ func (sl *StandardLogger) Critical(info, msg string) {
 // GoLogger just uses the standard go log package.
 type GoLogger struct{}
 
-// NewGoLogger returns a logger implementation using the
-// Go log package.
-func NewGoLogger() Logger {
-	return &GoLogger{}
-}
-
 // Debug logs a message at debug level.
-func (gl *GoLogger) Debug(info, msg string) {
-	log.Println("[DEBUG]", info, msg)
+func (gl GoLogger) Debug(info, msg string) {
+	log.Println("[D]", info, msg)
 }
 
 // Info logs a message at info level.
-func (gl *GoLogger) Info(info, msg string) {
-	log.Println("[INFO]", info, msg)
+func (gl GoLogger) Info(info, msg string) {
+	log.Println("[I]", info, msg)
 }
 
 // Warning logs a message at warning level.
-func (gl *GoLogger) Warning(info, msg string) {
-	log.Println("[WARNING]", info, msg)
+func (gl GoLogger) Warning(info, msg string) {
+	log.Println("[W]", info, msg)
 }
 
 // Error logs a message at error level.
-func (gl *GoLogger) Error(info, msg string) {
-	log.Println("[ERROR]", info, msg)
+func (gl GoLogger) Error(info, msg string) {
+	log.Println("[E]", info, msg)
 }
 
 // Critical logs a message at critical level.
-func (gl *GoLogger) Critical(info, msg string) {
-	log.Println("[CRITICAL]", info, msg)
-}
-
-// SysLogger
-type SysLogger struct {
-	writer *syslog.Writer
-}
-
-// NewGoLogger returns a logger implementation using the
-// Go syslog package.
-func NewSysLogger(tag string) (Logger, error) {
-	writer, err := syslog.New(syslog.LOG_DEBUG|syslog.LOG_LOCAL0, tag)
-	if err != nil {
-		log.Fatalf("cannot init syslog: %v", err)
-		return nil, err
-	}
-	return &SysLogger{writer}, nil
-}
-
-// Debug logs a message at debug level.
-func (sl *SysLogger) Debug(info, msg string) {
-	sl.writer.Debug(info + " " + msg)
-}
-
-// Info logs a message at info level.
-func (sl *SysLogger) Info(info, msg string) {
-	sl.writer.Info(info + " " + msg)
-}
-
-// Warning logs a message at warning level.
-func (sl *SysLogger) Warning(info, msg string) {
-	sl.writer.Warning(info + " " + msg)
-}
-
-// Error logs a message at error level.
-func (sl *SysLogger) Error(info, msg string) {
-	sl.writer.Err(info + " " + msg)
-}
-
-// Critical logs a message at critical level.
-func (sl *SysLogger) Critical(info, msg string) {
-	sl.writer.Crit(info + " " + msg)
+func (gl GoLogger) Critical(info, msg string) {
+	log.Println("[C]", info, msg)
 }
 
 //--------------------

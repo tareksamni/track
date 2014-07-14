@@ -1,6 +1,6 @@
 // Tideland Go Application Support - Loop
 //
-// Copyright (C) 2013-2014 Frank Mueller / Oldenburg / Germany
+// Copyright (C) 2013 Frank Mueller / Oldenburg / Germany
 //
 // All rights reserved. Use of this source code is governed
 // by the new BSD license.

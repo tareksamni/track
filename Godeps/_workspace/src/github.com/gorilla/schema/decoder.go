@@ -17,7 +17,39 @@ func NewDecoder() *Decoder {
 
 // Decoder decodes values from a map[string][]string to a struct.
 type Decoder struct {
-	cache *cache
+	cache             *cache
+	zeroEmpty         bool
+	ignoreUnknownKeys bool
+}
+
+// SetAliasTag changes the tag used to locate custome field aliases.
+// The default tag is "schema".
+func (d *Decoder) SetAliasTag(tag string) {
+	d.cache.tag = tag
+}
+
+// ZeroEmpty controls the behaviour when the decoder encounters empty values
+// in a map.
+// If z is true and a key in the map has the empty string as a value
+// then the corresponding struct field is set to the zero value.
+// If z is false then empty strings are ignored.
+//
+// The default value is false, that is empty values do not change
+// the value of the struct field.
+func (d *Decoder) ZeroEmpty(z bool) {
+	d.zeroEmpty = z
+}
+
+// IgnoreUnknownKeys controls the behaviour when the decoder encounters unknown
+// keys in the map.
+// If i is true and an unknown field is encountered, it is ignored. This is
+// similar to how unknown keys are handled by encoding/json.
+// If i is false then Decode will return an error. Note that any valid keys
+// will still be decoded in to the target struct.
+//
+// To preserve backwards compatibility, the default value is false.
+func (d *Decoder) IgnoreUnknownKeys(i bool) {
+	d.ignoreUnknownKeys = i
 }
 
 // RegisterConverter registers a converter function for a custom type.
@@ -46,7 +78,7 @@ func (d *Decoder) Decode(dst interface{}, src map[string][]string) error {
 			if err = d.decode(v, path, parts, values); err != nil {
 				errors[path] = err
 			}
-		} else {
+		} else if !d.ignoreUnknownKeys {
 			errors[path] = fmt.Errorf("schema: invalid path %q", path)
 		}
 	}
@@ -60,14 +92,14 @@ func (d *Decoder) Decode(dst interface{}, src map[string][]string) error {
 func (d *Decoder) decode(v reflect.Value, path string, parts []pathPart,
 	values []string) error {
 	// Get the field walking the struct fields by index.
-	for _, idx := range parts[0].path {
+	for _, name := range parts[0].path {
 		if v.Type().Kind() == reflect.Ptr {
 			if v.IsNil() {
 				v.Set(reflect.New(v.Type().Elem()))
 			}
 			v = v.Elem()
 		}
-		v = v.Field(idx)
+		v = v.FieldByName(name)
 	}
 
 	// Don't even bother for unexported fields.
@@ -112,7 +144,11 @@ func (d *Decoder) decode(v reflect.Value, path string, parts []pathPart,
 			return fmt.Errorf("schema: converter not found for %v", elemT)
 		}
 		for key, value := range values {
-			if item := conv(value); item.IsValid() {
+			if value == "" {
+				if d.zeroEmpty {
+					items = append(items, reflect.Zero(elemT))
+				}
+			} else if item := conv(value); item.IsValid() {
 				if isPtrElem {
 					ptr := reflect.New(elemT)
 					ptr.Elem().Set(item)
@@ -120,17 +156,26 @@ func (d *Decoder) decode(v reflect.Value, path string, parts []pathPart,
 				}
 				items = append(items, item)
 			} else {
-				items[key] = reflect.Zero(elemT)
+				// If a single value is invalid should we give up
+				// or set a zero value?
+				return ConversionError{path, key}
 			}
 		}
 		value := reflect.Append(reflect.MakeSlice(t, 0, 0), items...)
 		v.Set(value)
 	} else {
-		if conv := d.cache.conv[t]; conv != nil {
-			if value := conv(values[len(values)-1]); value.IsValid() {
+		// Use the last value provided
+		val := values[len(values)-1]
+
+		if val == "" {
+			if d.zeroEmpty {
+				v.Set(reflect.Zero(t))
+			}
+		} else if conv := d.cache.conv[t]; conv != nil {
+			if value := conv(val); value.IsValid() {
 				v.Set(value)
 			} else {
-				reflect.Zero(t)
+				return ConversionError{path, -1}
 			}
 		} else {
 			return fmt.Errorf("schema: converter not found for %v", t)
