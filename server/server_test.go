@@ -160,13 +160,14 @@ func doHttp(t *testing.T, index int, endpoint string, data interface{}, statusCo
 
 	client := &http.Client{}
 	r, err := client.Do(req)
-	defer r.Body.Close()
 	//fmt.Println(values.Encode())
 
 	if err != nil {
 		t.Fatalf("error posting: %s", err)
 		return
 	}
+
+	defer r.Body.Close()
 
 	if r.StatusCode != statusCode {
 		body, _ := ioutil.ReadAll(r.Body)
