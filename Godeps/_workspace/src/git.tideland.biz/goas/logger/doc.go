@@ -1,6 +1,6 @@
 // Tideland Go Application Support - Logger
 //
-// Copyright (C) 2012-2013 Frank Mueller / Oldenburg / Germany
+// Copyright (C) 2012-2014 Frank Mueller / Oldenburg / Germany
 //
 // All rights reserved. Use of this source code is governed
 // by the new BSD license.

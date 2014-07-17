@@ -1,6 +1,6 @@
 // Tideland Go Application Support - Loop
 //
-// Copyright (C) 2013 Frank Mueller / Oldenburg / Germany
+// Copyright (C) 2013-2014 Frank Mueller / Oldenburg / Germany
 //
 // All rights reserved. Use of this source code is governed
 // by the new BSD license.
@@ -102,9 +102,14 @@ type Loop interface {
 	// Error returns the current status and error of the loop.
 	Error() (status int, err error)
 
-	// ShallStop returns the channel signalling the loop to
+	// ShallStop returns a channel signalling the loop to
 	// stop working.
 	ShallStop() <-chan struct{}
+
+	// IsStopping returns a channel that can be used to wait until
+	// the loop is stopping or to avoid deadlocks when communicating
+	// with the loop.
+	IsStopping() <-chan struct{}
 }
 
 // Loop manages a loop function.
@@ -248,9 +253,16 @@ func (l *loop) Error() (status int, err error) {
 	return
 }
 
-// ShallStop returns the channel signalling the loop to
+// ShallStop returns a channel signalling the loop to
 // stop working.
 func (l *loop) ShallStop() <-chan struct{} {
+	return l.stopChan
+}
+
+// IsStopping returns a channel that can be used to wait until
+// the loop is stopping or to avoid deadlocks when communicating
+// with the loop.
+func (l *loop) IsStopping() <-chan struct{} {
 	return l.stopChan
 }
 
