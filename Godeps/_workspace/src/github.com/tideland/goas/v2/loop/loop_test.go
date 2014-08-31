@@ -1,6 +1,6 @@
 // Tideland Go Application Support - Loop - Unit Test
 //
-// Copyright (C) 2013-2014 Frank Mueller / Oldenburg / Germany
+// Copyright (C) 2013-2014 Frank Mueller / Tideland / Oldenburg / Germany
 //
 // All rights reserved. Use of this source code is governed
 // by the new BSD license.
@@ -16,8 +16,8 @@ import (
 	"testing"
 	"time"
 
-	"git.tideland.biz/goas/loop"
-	"git.tideland.biz/gots/asserts"
+	"github.com/tideland/goas/v2/loop"
+	"github.com/tideland/gots/v3/asserts"
 )
 
 var (

@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"git.tideland.biz/goas/monitoring"
+	"github.com/tideland/goas/v2/monitoring"
 	"github.com/simonz05/util/log"
 )
 

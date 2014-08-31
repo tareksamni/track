@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"runtime/pprof"
 
-	"git.tideland.biz/goas/monitoring"
+	"github.com/tideland/goas/v2/monitoring"
 	"github.com/simonz05/track/server"
 	"github.com/simonz05/util/log"
 )

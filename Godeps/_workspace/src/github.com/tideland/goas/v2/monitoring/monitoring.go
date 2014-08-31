@@ -1,6 +1,6 @@
 // Tideland Go Application Support - Monitoring
 //
-// Copyright (C) 2009-2013 Frank Mueller / Oldenburg / Germany
+// Copyright (C) 2009-2014 Frank Mueller / Tideland / Oldenburg / Germany
 //
 // All rights reserved. Use of this source code is governed
 // by the new BSD license.
@@ -15,9 +15,9 @@ import (
 	"sort"
 	"time"
 
-	"git.tideland.biz/goas/errors"
-	"git.tideland.biz/goas/logger"
-	"git.tideland.biz/goas/loop"
+	"github.com/tideland/goas/v2/logger"
+	"github.com/tideland/goas/v2/loop"
+	"github.com/tideland/goas/v3/errors"
 )
 
 //--------------------
@@ -90,7 +90,7 @@ func (m *systemMonitor) command(opCode int, args interface{}) (interface{}, erro
 	m.commandChan <- cmd
 	resp, ok := <-cmd.respChan
 	if !ok {
-		return nil, errors.New(ecMonitorPanicked, msgMonitorPanicked)
+		return nil, errors.New(ErrMonitorPanicked, errorMessages)
 	}
 	if err, ok := resp.(error); ok {
 		return nil, err
@@ -155,7 +155,7 @@ func (m *systemMonitor) processCommand(cmd *command) {
 			cmd.respond(&clone)
 		} else {
 			// Measuring point does not exist.
-			cmd.respond(errors.New(ecMeasuringPointNotExists, msgMeasuringPointNotExists, id))
+			cmd.respond(errors.New(ErrMeasuringPointNotExists, errorMessages, id))
 		}
 	case cmdMeasuringPointsReadAll:
 		// Read all measuring points.
@@ -175,7 +175,7 @@ func (m *systemMonitor) processCommand(cmd *command) {
 			cmd.respond(&clone)
 		} else {
 			// Variable does not exist.
-			cmd.respond(errors.New(ecStaySetVariableNotExists, msgStaySetVariableNotExists, id))
+			cmd.respond(errors.New(ErrStaySetVariableNotExists, errorMessages, id))
 		}
 	case cmdStaySetVariablesReadAll:
 		// Read all stay-set variables.
@@ -199,7 +199,7 @@ func (m *systemMonitor) processCommand(cmd *command) {
 			}
 		} else {
 			// Dynamic status does not exist.
-			cmd.respond(errors.New(ecDynamicStatusNotExists, msgDynamicStatusNotExists, id))
+			cmd.respond(errors.New(ErrDynamicStatusNotExists, errorMessages, id))
 		}
 	case cmdDynamicStatusRetrieversReadAll:
 		// Read all dynamic status values.
@@ -221,7 +221,7 @@ func (m *systemMonitor) processCommand(cmd *command) {
 func (m *systemMonitor) checkRecovering(rs loop.Recoverings) (loop.Recoverings, error) {
 	if rs.Frequency(12, time.Minute) {
 		logger.Errorf("monitor cannot be recovered: %v", rs.Last().Reason)
-		return nil, errors.New(ecMonitorCannotBeRecovered, msgMonitorCannotBeRecovered, rs.Last().Reason)
+		return nil, errors.New(ErrMonitorCannotBeRecovered, errorMessages, rs.Last().Reason)
 	}
 	logger.Warningf("monitor recovered: %v", rs.Last().Reason)
 	return rs.Trim(12), nil

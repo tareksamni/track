@@ -1,6 +1,6 @@
 // Tideland Go Application Support - Monitoring - Unit Tests
 //
-// Copyright (C) 2009-2013 Frank Mueller / Oldenburg / Germany
+// Copyright (C) 2009-2014 Frank Mueller / Tideland / Oldenburg / Germany
 //
 // All rights reserved. Use of this source code is governed
 // by the new BSD license.
@@ -17,8 +17,8 @@ import (
 	"testing"
 	"time"
 
-	"git.tideland.biz/goas/monitoring"
-	"git.tideland.biz/gots/asserts"
+	"github.com/tideland/goas/v2/monitoring"
+	"github.com/tideland/gots/v3/asserts"
 )
 
 //--------------------
@@ -40,7 +40,7 @@ func TestEtmMonitor(t *testing.T) {
 	time.Sleep(time.Millisecond)
 	// Asserts.
 	mp, err := monitoring.ReadMeasuringPoint("foo")
-	assert.ErrorMatch(err, `measuring point "foo" does not exist \(E.*\)`, "reading non-existent measuring point")
+	assert.ErrorMatch(err, `\[E.*\] measuring point "foo" does not exist`, "reading non-existent measuring point")
 	mp, err = monitoring.ReadMeasuringPoint("mp:task:5")
 	assert.Nil(err, "No error expected.")
 	assert.Equal(mp.Id, "mp:task:5", "should get the right one")
@@ -66,7 +66,7 @@ func TestSsiMonitor(t *testing.T) {
 	time.Sleep(time.Millisecond)
 	// Asserts.
 	ssv, err := monitoring.ReadVariable("foo")
-	assert.ErrorMatch(err, `stay-set variable "foo" does not exist \(E.*\)`, "reading non-existent variable")
+	assert.ErrorMatch(err, `\[E.*\] stay-set variable "foo" does not exist`, "reading non-existent variable")
 	ssv, err = monitoring.ReadVariable("ssv:value:5")
 	assert.Nil(err, "no error expected")
 	assert.Equal(ssv.Id, "ssv:value:5", "should get the right one")
@@ -91,13 +91,13 @@ func TestDsrMonitor(t *testing.T) {
 	time.Sleep(time.Millisecond)
 	// Asserts.
 	dsv, err := monitoring.ReadStatus("foo")
-	assert.ErrorMatch(err, `dynamic status "foo" does not exist \(E.*\)`, "reading non-existent status")
+	assert.ErrorMatch(err, `\[E.*\] dynamic status "foo" does not exist`, "reading non-existent status")
 	dsv, err = monitoring.ReadStatus("dsr:b")
 	assert.Nil(err, "no error expected")
 	assert.Equal(dsv, "4711", "status value should be correct")
 	dsv, err = monitoring.ReadStatus("dsr:d")
 	assert.NotNil(err, "error should be returned")
-	assert.ErrorMatch(err, `monitor backend panicked \(E.*\)`, "error inside retrieval has to be catched")
+	assert.ErrorMatch(err, `\[E.*\] monitor backend panicked`, "error inside retrieval has to be catched")
 }
 
 // Test the behavior after an internal panic.
@@ -110,7 +110,7 @@ func TestInternalPanic(t *testing.T) {
 	// Asserts.
 	dsv, err := monitoring.ReadStatus("panic")
 	assert.Empty(dsv, "no dynamic status value")
-	assert.ErrorMatch(err, `monitor backend panicked \(E.*\)`, "monitor restarted due to panic")
+	assert.ErrorMatch(err, `\[E.*\] monitor backend panicked`, "monitor restarted due to panic")
 }
 
 //--------------------

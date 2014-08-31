@@ -6,26 +6,6 @@
 	],
 	"Deps": [
 		{
-			"ImportPath": "git.tideland.biz/goas/errors",
-			"Comment": "v2.3.0",
-			"Rev": "e149ed628422e700c9ed79c0614356769807934a"
-		},
-		{
-			"ImportPath": "git.tideland.biz/goas/logger",
-			"Comment": "v2.3.0",
-			"Rev": "e149ed628422e700c9ed79c0614356769807934a"
-		},
-		{
-			"ImportPath": "git.tideland.biz/goas/loop",
-			"Comment": "v2.3.0",
-			"Rev": "e149ed628422e700c9ed79c0614356769807934a"
-		},
-		{
-			"ImportPath": "git.tideland.biz/goas/monitoring",
-			"Comment": "v2.3.0",
-			"Rev": "e149ed628422e700c9ed79c0614356769807934a"
-		},
-		{
 			"ImportPath": "github.com/go-sql-driver/mysql",
 			"Comment": "v1.2-1-g7094cf0",
 			"Rev": "7094cf0331ed6bde3cd75aa5d1da0e7764b526c9"
@@ -49,6 +29,22 @@
 		{
 			"ImportPath": "github.com/simonz05/util/raven",
 			"Rev": "eb16508a48922db46edf496384f5afdda8c4adbf"
+		},
+		{
+			"ImportPath": "github.com/tideland/goas/v2/logger",
+			"Rev": "0e02cf7657fc2b1ec8d1ad31c938461906496855"
+		},
+		{
+			"ImportPath": "github.com/tideland/goas/v2/loop",
+			"Rev": "0e02cf7657fc2b1ec8d1ad31c938461906496855"
+		},
+		{
+			"ImportPath": "github.com/tideland/goas/v2/monitoring",
+			"Rev": "0e02cf7657fc2b1ec8d1ad31c938461906496855"
+		},
+		{
+			"ImportPath": "github.com/tideland/goas/v3/errors",
+			"Rev": "0e02cf7657fc2b1ec8d1ad31c938461906496855"
 		}
 	]
 }

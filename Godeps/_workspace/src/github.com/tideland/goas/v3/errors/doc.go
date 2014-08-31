@@ -1,6 +1,6 @@
 // Tideland Go Application Support - Errors
 //
-// Copyright (C) 2013-2014 Frank Mueller / Oldenburg / Germany
+// Copyright (C) 2013-2014 Frank Mueller / Tideland / Oldenburg / Germany
 //
 // All rights reserved. Use of this source code is governed
 // by the new BSD license.

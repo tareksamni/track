@@ -1,6 +1,6 @@
 // Tideland Go Application Support - Monitoring
 //
-// Copyright (C) 2009-2013 Frank Mueller / Oldenburg / Germany
+// Copyright (C) 2009-2014 Frank Mueller / Tideland / Oldenburg / Germany
 //
 // All rights reserved. Use of this source code is governed
 // by the new BSD license.
@@ -12,7 +12,7 @@ package monitoring
 //--------------------
 
 import (
-	"git.tideland.biz/goas/errors"
+	"github.com/tideland/goas/v3/errors"
 )
 
 //--------------------
@@ -20,19 +20,20 @@ import (
 //--------------------
 
 const (
-	ecNoError = iota
-	ecMonitorPanicked
-	ecMonitorCannotBeRecovered
-	ecMeasuringPointNotExists
-	ecStaySetVariableNotExists
-	ecDynamicStatusNotExists
-
-	msgMonitorPanicked          = "monitor backend panicked"
-	msgMonitorCannotBeRecovered = "monitor cannot be recovered: %v"
-	msgMeasuringPointNotExists  = "measuring point %q does not exist"
-	msgStaySetVariableNotExists = "stay-set variable %q does not exist"
-	msgDynamicStatusNotExists   = "dynamic status %q does not exist"
+	ErrMonitorPanicked = iota + 1
+	ErrMonitorCannotBeRecovered
+	ErrMeasuringPointNotExists
+	ErrStaySetVariableNotExists
+	ErrDynamicStatusNotExists
 )
+
+var errorMessages = errors.Messages{
+	ErrMonitorPanicked:          "monitor backend panicked",
+	ErrMonitorCannotBeRecovered: "monitor cannot be recovered: %v",
+	ErrMeasuringPointNotExists:  "measuring point %q does not exist",
+	ErrStaySetVariableNotExists: "stay-set variable %q does not exist",
+	ErrDynamicStatusNotExists:   "dynamic status %q does not exist",
+}
 
 //--------------------
 // TESTING
@@ -41,31 +42,31 @@ const (
 // IsMonitorPanickedError returns true, if the error signals that
 // the monitor backend panicked.
 func IsMonitorPanickedError(err error) bool {
-	return errors.IsError(err, ecMonitorPanicked)
+	return errors.IsError(err, ErrMonitorPanicked)
 }
 
 // IsMonitorCannotBeRecoveredError returns true, if the error signals that
 // the monitor backend has panicked to often and cannot be recovered.
 func IsMonitorCannotBeRecoveredError(err error) bool {
-	return errors.IsError(err, ecMonitorCannotBeRecovered)
+	return errors.IsError(err, ErrMonitorCannotBeRecovered)
 }
 
 // IsMeasuringPointNotExistsError returns true, if the error signals that
 // a wanted measuring point cannot be retrieved because it doesn't exists.
 func IsMeasuringPointNotExistsError(err error) bool {
-	return errors.IsError(err, ecMeasuringPointNotExists)
+	return errors.IsError(err, ErrMeasuringPointNotExists)
 }
 
 // IsStaySetVariableNotExistsError returns true, if the error signals that
 // a wanted stay-set variable cannot be retrieved because it doesn't exists.
 func IsStaySetVariableNotExistsError(err error) bool {
-	return errors.IsError(err, ecStaySetVariableNotExists)
+	return errors.IsError(err, ErrStaySetVariableNotExists)
 }
 
 // IsDynamicStatusNotExistsError returns true, if the error signals that
 // a wanted dynamic status cannot be retrieved because it doesn't exists.
 func IsDynamicStatusNotExistsError(err error) bool {
-	return errors.IsError(err, ecDynamicStatusNotExists)
+	return errors.IsError(err, ErrDynamicStatusNotExists)
 }
 
 // EOF

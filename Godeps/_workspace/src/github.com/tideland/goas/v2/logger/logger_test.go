@@ -1,6 +1,6 @@
 // Tideland Go Application Support - Logger - Unit Tests
 //
-// Copyright (C) 2012-2014 Frank Mueller / Oldenburg / Germany
+// Copyright (C) 2012-2014 Frank Mueller / Tideland / Oldenburg / Germany
 //
 // All rights reserved. Use of this source code is governed
 // by the new BSD license.
@@ -16,8 +16,8 @@ import (
 	"os"
 	"testing"
 
-	"git.tideland.biz/goas/logger"
-	"git.tideland.biz/gots/asserts"
+	"github.com/tideland/goas/v2/logger"
+	"github.com/tideland/gots/v3/asserts"
 )
 
 //--------------------
