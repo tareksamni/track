@@ -7,8 +7,8 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/go-sql-driver/mysql",
-			"Comment": "v1.2-1-g7094cf0",
-			"Rev": "7094cf0331ed6bde3cd75aa5d1da0e7764b526c9"
+			"Comment": "v1.2-8-g0b00042",
+			"Rev": "0b000424e546f305e0bd47856d5fcb904c1a0eb4"
 		},
 		{
 			"ImportPath": "github.com/gorilla/context",
@@ -16,7 +16,7 @@
 		},
 		{
 			"ImportPath": "github.com/gorilla/mux",
-			"Rev": "14cafe28513321476c73967a5a4f3454b6129c46"
+			"Rev": "4b8fbc56f3b2400a7c7ea3dba9b3539787c486b6"
 		},
 		{
 			"ImportPath": "github.com/gorilla/schema",
