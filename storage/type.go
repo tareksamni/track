@@ -45,12 +45,13 @@ type TableValidator interface {
 var regionValidator = regexp.MustCompile("^[a-zA-Z]{2,16}$")
 
 type Session struct {
-	ProfileID   int       // 100
-	Region      string    // BR
-	SessionID   string    // 123ABCDFG
-	RemoteIP    string    // 127.0.0.1
-	SessionType string    // Web
-	Message     string    // PageView
+	ProfileID   int    // 100
+	Region      string // BR
+	SessionID   string // 123ABCDFG
+	RemoteIP    string // 127.0.0.1
+	SessionType string // Web
+	Message     string // PageView
+	Language    string
 	Created     time.Time `schema:"-"`
 }
 
@@ -63,11 +64,11 @@ func (s *Session) Table() string {
 }
 
 func (s *Session) Columns() []string {
-	return []string{"Region", "SessionID", "ProfileID", "RemoteIP", "SessionType", "Created", "Message"}
+	return []string{"Region", "SessionID", "ProfileID", "RemoteIP", "SessionType", "Created", "Message", "Language"}
 }
 
 func (s *Session) Values() []interface{} {
-	return []interface{}{s.Region, s.SessionID, s.ProfileID, s.RemoteIP, s.SessionType, s.Created, s.Message}
+	return []interface{}{s.Region, s.SessionID, s.ProfileID, s.RemoteIP, s.SessionType, s.Created, s.Message, s.Language}
 }
 
 func (s *Session) Validate() error {
@@ -91,6 +92,7 @@ type User struct {
 	Region    string
 	Referrer  string
 	Message   string
+	Language  string
 	Created   time.Time `schema:"-"`
 }
 
@@ -103,11 +105,11 @@ func (u *User) Table() string {
 }
 
 func (u *User) Columns() []string {
-	return []string{"Region", "ProfileID", "Referrer", "Created", "Message"}
+	return []string{"Region", "ProfileID", "Referrer", "Created", "Message", "Language"}
 }
 
 func (u *User) Values() []interface{} {
-	return []interface{}{u.Region, u.ProfileID, u.Referrer, u.Created, u.Message}
+	return []interface{}{u.Region, u.ProfileID, u.Referrer, u.Created, u.Message, u.Language}
 }
 
 func (u *User) Validate() error {
@@ -131,6 +133,7 @@ type Item struct {
 	IsRented    bool
 	PriceGold   int
 	PriceSilver int
+	Language    string
 	Created     time.Time `schema:"-"`
 }
 
@@ -143,11 +146,11 @@ func (i *Item) Table() string {
 }
 
 func (i *Item) Columns() []string {
-	return []string{"Region", "ProfileID", "ItemName", "ItemType", "IsUGC", "IsRented", "PriceGold", "PriceSilver", "Created"}
+	return []string{"Region", "ProfileID", "ItemName", "ItemType", "IsUGC", "IsRented", "PriceGold", "PriceSilver", "Created", "Language"}
 }
 
 func (i *Item) Values() []interface{} {
-	return []interface{}{i.Region, i.ProfileID, i.ItemName, i.ItemType, i.IsUGC, i.IsRented, i.PriceGold, i.PriceSilver, i.Created}
+	return []interface{}{i.Region, i.ProfileID, i.ItemName, i.ItemType, i.IsUGC, i.IsRented, i.PriceGold, i.PriceSilver, i.Created, i.Language}
 }
 
 func (i *Item) Validate() error {
@@ -174,6 +177,7 @@ type Purchase struct {
 	NetAmount       *big.Rat
 	PaymentProvider string
 	Product         string
+	Language        string
 	Created         time.Time `schema:"-"`
 }
 
@@ -186,11 +190,11 @@ func (p *Purchase) Table() string {
 }
 
 func (p *Purchase) Columns() []string {
-	return []string{"Region", "ProfileID", "Currency", "GrossAmount", "NetAmount", "PaymentProvider", "Product", "Created"}
+	return []string{"Region", "ProfileID", "Currency", "GrossAmount", "NetAmount", "PaymentProvider", "Product", "Created", "Language"}
 }
 
 func (p *Purchase) Values() []interface{} {
-	return []interface{}{p.Region, p.ProfileID, p.Currency, p.GrossAmount.FloatString(4), p.NetAmount.FloatString(4), p.PaymentProvider, p.Product, p.Created}
+	return []interface{}{p.Region, p.ProfileID, p.Currency, p.GrossAmount.FloatString(4), p.NetAmount.FloatString(4), p.PaymentProvider, p.Product, p.Created, p.Language}
 }
 
 func (p *Purchase) Validate() error {
