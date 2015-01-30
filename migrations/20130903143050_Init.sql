@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS UserEvent (
     Referrer varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     Message varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
     Created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Language varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
     PRIMARY KEY (EventID)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -19,6 +20,7 @@ CREATE TABLE IF NOT EXISTS SessionEvent (
     SessionType varchar(32) COLLATE utf8_unicode_ci NOT NULL,
     Message varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
     Created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Language varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
     PRIMARY KEY (EventID)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -33,6 +35,7 @@ CREATE TABLE IF NOT EXISTS ItemEvent (
     PriceGold int(11) DEFAULT NULL,
     PriceSilver int(11) DEFAULT NULL,
     Created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Language varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
     PRIMARY KEY (EventID)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -46,6 +49,7 @@ CREATE TABLE IF NOT EXISTS PurchaseEvent (
     PaymentProvider varchar(45) COLLATE utf8_unicode_ci NOT NULL,
     Product varchar(45) COLLATE utf8_unicode_ci NOT NULL,
     Created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Language varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
     PRIMARY KEY (EventID)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
