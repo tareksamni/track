@@ -93,7 +93,7 @@ type User struct {
 	Referrer  string
 	Message   string
 	Language  string
-	IP        string
+	RemoteIP  string
 	Created   time.Time `schema:"-"`
 }
 
@@ -106,11 +106,11 @@ func (u *User) Table() string {
 }
 
 func (u *User) Columns() []string {
-	return []string{"Region", "ProfileID", "Referrer", "Created", "Message", "Language", "IP"}
+	return []string{"Region", "ProfileID", "Referrer", "Created", "Message", "Language", "RemoteIP"}
 }
 
 func (u *User) Values() []interface{} {
-	return []interface{}{u.Region, u.ProfileID, u.Referrer, u.Created, u.Message, u.Language, u.IP}
+	return []interface{}{u.Region, u.ProfileID, u.Referrer, u.Created, u.Message, u.Language, u.RemoteIP}
 }
 
 func (u *User) Validate() error {
@@ -135,7 +135,7 @@ type Item struct {
 	PriceGold   int
 	PriceSilver int
 	Language    string
-	IP          string
+	RemoteIP    string
 	Created     time.Time `schema:"-"`
 }
 
@@ -148,11 +148,11 @@ func (i *Item) Table() string {
 }
 
 func (i *Item) Columns() []string {
-	return []string{"Region", "ProfileID", "ItemName", "ItemType", "IsUGC", "IsRented", "PriceGold", "PriceSilver", "Created", "Language", "IP"}
+	return []string{"Region", "ProfileID", "ItemName", "ItemType", "IsUGC", "IsRented", "PriceGold", "PriceSilver", "Created", "Language", "RemoteIP"}
 }
 
 func (i *Item) Values() []interface{} {
-	return []interface{}{i.Region, i.ProfileID, i.ItemName, i.ItemType, i.IsUGC, i.IsRented, i.PriceGold, i.PriceSilver, i.Created, i.Language, i.IP}
+	return []interface{}{i.Region, i.ProfileID, i.ItemName, i.ItemType, i.IsUGC, i.IsRented, i.PriceGold, i.PriceSilver, i.Created, i.Language, i.RemoteIP}
 }
 
 func (i *Item) Validate() error {
